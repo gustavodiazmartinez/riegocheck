@@ -1,0 +1,13 @@
+{
+  "background_color": "#ba82ce",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "RiegoCheck",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "RiegoCheck",
+  "start_url": "/",
+  "theme_color": "#78c78c",
+  "id": "RiegoCheck",
+  "description": "Diagnostico guiado para sistemas de riego automatico residencial"
+}
