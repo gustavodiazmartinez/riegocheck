@@ -2,13 +2,13 @@
   "background_color": "#0d1117",
   "dir": "ltr",
   "display": "standalone",
-  "name": "Diagnóstico 7",
-  "short_name": "Diag7",
+  "name": "RiegoCheck",
+  "short_name": "RiegoCheck",
   "orientation": "any",
   "scope": "/riegocheck/",
   "start_url": "/riegocheck/",
   "theme_color": "#00e5c8",
-  "id": "diagnostico7",
+  "id": "riegocheck",
   "description": "Diagnóstico guiado para sistemas de riego automático residencial",
   "icons": [
     {
@@ -22,4 +22,4 @@
       "type": "image/png"
     }
   ]
-}
+} 
