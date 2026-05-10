@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bomba de riego no arranca — Diagnóstico paso a paso | RiegoCheck</title>
+  <meta name="description" content="Guía técnica profesional para diagnosticar una bomba de riego que no arranca. Monofásica y trifásica. Diagnóstico eléctrico e hidráulico paso a paso.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --verde: #00b894;
+      --verde-oscuro: #007a63;
+      --azul: #0984e3;
+      --naranja: #e17055;
+      --rojo: #d63031;
+      --gris-oscuro: #1e272e;
+      --gris-medio: #2d3436;
+      --gris-texto: #636e72;
+      --fondo: #f5f6fa;
+      --blanco: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--fondo);
+      color: var(--gris-oscuro);
+      line-height: 1.7;
+    }
+
+    header {
+      background: var(--gris-oscuro);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 3px solid var(--verde);
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--blanco);
+      letter-spacing: 1px;
+    }
+
+    .logo span { color: var(--verde); }
+
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: var(--blanco);
+      padding: 48px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '⚡';
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      font-size: 8rem;
+      opacity: 0.06;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--naranja);
+      color: var(--blanco);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      opacity: 0.85;
+      max-width: 600px;
+    }
+
+    .stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(225,112,85,0.2);
+      border: 1px solid var(--naranja);
+      border-radius: 8px;
+      padding: 8px 16px;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--naranja);
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    /* SELECTOR TIPO BOMBA */
+    .tipo-bomba {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .tipo-card {
+      background: var(--blanco);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border: 2px solid transparent;
+    }
+
+    .tipo-card.mono { border-color: var(--azul); }
+    .tipo-card.tri { border-color: var(--naranja); }
+
+    .tipo-icon { font-size: 2rem; margin-bottom: 8px; }
+
+    .tipo-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .tipo-card.mono .tipo-nombre { color: var(--azul); }
+    .tipo-card.tri .tipo-nombre { color: var(--naranja); }
+
+    .tipo-desc { font-size: 0.82rem; color: var(--gris-texto); }
+
+    /* PASOS */
+    .paso {
+      background: var(--blanco);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-left: 4px solid var(--naranja);
+    }
+
+    .paso-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+    }
+
+    .paso-numero {
+      background: var(--naranja);
+      color: var(--blanco);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .paso-titulo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--gris-oscuro);
+    }
+
+    .paso-body {
+      padding: 0 24px 24px;
+      color: var(--gris-medio);
+    }
+
+    .bifurcacion {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .bifur-mono {
+      background: #e3f2fd;
+      border: 1px solid var(--azul);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+
+    .bifur-tri {
+      background: #fff3e0;
+      border: 1px solid var(--naranja);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+
+    .bifur-label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .bifur-mono .bifur-label { color: var(--azul); }
+    .bifur-tri .bifur-label { color: var(--naranja); }
+    .bifur-texto { font-size: 0.9rem; }
+
+    .checklist { list-style: none; margin: 12px 0; }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.95rem;
+    }
+
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon { color: var(--naranja); font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+
+    .alerta {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.92rem;
+    }
+
+    .alerta strong { color: #856404; }
+
+    .peligro {
+      background: #fdecea;
+      border-left: 4px solid var(--rojo);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.92rem;
+    }
+
+    .peligro strong { color: var(--rojo); }
+
+    /* SECCIÓN BLOQUEADA */
+    .bloqueado {
+      background: linear-gradient(135deg, var(--gris-oscuro), #2d3436);
+      border-radius: 12px;
+      padding: 32px 24px;
+      margin: 32px 0;
+      color: var(--blanco);
+      text-align: center;
+    }
+
+    .bloqueado::before {
+      content: '🔒';
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .bloqueado h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .bloqueado p { opacity: 0.8; font-size: 0.95rem; margin-bottom: 20px; }
+
+    .bloqueado ul {
+      list-style: none;
+      text-align: left;
+      display: inline-block;
+      margin-bottom: 24px;
+    }
+
+    .bloqueado ul li { padding: 4px 0; font-size: 0.9rem; opacity: 0.85; }
+    .bloqueado ul li::before { content: '→ '; color: var(--verde); font-weight: 700; }
+
+    /* CTA */
+    .cta-box {
+      background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
+      border-radius: 16px;
+      padding: 36px 24px;
+      text-align: center;
+      color: var(--blanco);
+      margin: 32px 0;
+    }
+
+    .cta-box h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .cta-box p { opacity: 0.9; margin-bottom: 24px; font-size: 1rem; }
+
+    .precio {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .btn-descarga {
+      display: inline-block;
+      background: var(--blanco);
+      color: var(--verde-oscuro);
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+
+    .btn-descarga:hover { transform: scale(1.04); }
+
+    .otros { margin: 32px 0 16px; }
+
+    .otros h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      color: var(--gris-oscuro);
+      margin-bottom: 16px;
+    }
+
+    .problema-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--blanco);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: var(--gris-oscuro);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-left: 4px solid var(--azul);
+      font-weight: 500;
+      transition: transform 0.15s;
+    }
+
+    .problema-link:hover { transform: translateX(4px); }
+
+    footer {
+      background: var(--gris-oscuro);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 24px;
+      font-size: 0.85rem;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.7rem; }
+      .bifurcacion, .tipo-bomba { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Riego<span>Check</span></div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">Guía Técnica Profesional</div>
+  <h1>Bomba de riego<br>que no arranca</h1>
+  <p>Diagnóstico ordenado para bombas monofásicas y trifásicas. Descartá primero lo más simple antes de abrir el tablero.</p>
+  <div class="stat">⚡ La mayoría de las fallas son eléctricas y tienen solución rápida en campo</div>
+</div>
+
+<div class="container">
+
+  <!-- TIPO DE BOMBA -->
+  <div class="tipo-bomba">
+    <div class="tipo-card mono">
+      <div class="tipo-icon">🔌</div>
+      <div class="tipo-nombre">Monofásica</div>
+      <div class="tipo-desc">Disyuntor + térmica + contactor + capacitor</div>
+    </div>
+    <div class="tipo-card tri">
+      <div class="tipo-icon">⚡</div>
+      <div class="tipo-nombre">Trifásica</div>
+      <div class="tipo-desc">Llave termomagnética + guardamotor + contactor</div>
+    </div>
+  </div>
+
+  <!-- PASO 1 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">1</div>
+      <div class="paso-titulo">Verificá la alimentación eléctrica</div>
+    </div>
+    <div class="paso-body">
+      <p>Antes de cualquier otro diagnóstico, confirmá que haya tensión en el tablero. Un corte de luz o un disyuntor disparado resuelven el problema en segundos.</p>
+      <ul class="checklist">
+        <li><span class="check-icon">→</span> Verificá que haya tensión en el tomacorriente o tablero general</li>
+        <li><span class="check-icon">→</span> Revisá el <strong>disyuntor o llave termomagnética</strong> — puede estar disparado</li>
+        <li><span class="check-icon">→</span> Volvé a encender si estaba disparado y observá si vuelve a disparar</li>
+      </ul>
+      <div class="alerta">
+        <strong>⚠️ Si dispara de nuevo inmediatamente</strong>, hay un cortocircuito o la protección está mal calibrada. No insistas — continuá con el diagnóstico.
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">2</div>
+      <div class="paso-titulo">Revisá las protecciones del tablero</div>
+    </div>
+    <div class="paso-body">
+      <p>Las protecciones actúan cuando hay sobrecarga o falla. Identificá tu tipo de bomba:</p>
+      <div class="bifurcacion">
+        <div class="bifur-mono">
+          <div class="bifur-label">🔌 Monofásica</div>
+          <div class="bifur-texto">Revisá la <strong>térmica</strong> (relé térmico) — puede estar disparada. Presioná el botón de reset y observá.</div>
+        </div>
+        <div class="bifur-tri">
+          <div class="bifur-label">⚡ Trifásica</div>
+          <div class="bifur-texto">Revisá el <strong>guardamotor</strong> — verificá que no esté disparado y que el ajuste de amperaje coincida con la placa del motor.</div>
+        </div>
+      </div>
+      <div class="alerta">
+        <strong>💡 Si la protección dispara seguido</strong>, la bomba está consumiendo más de lo normal. Puede ser por sobrecarga mecánica, problema eléctrico o falla en el motor.
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">3</div>
+      <div class="paso-titulo">Verificá el contactor</div>
+    </div>
+    <div class="paso-body">
+      <p>El contactor es el interruptor que conecta la corriente al motor cuando recibe la señal del programador. Si no cierra, la bomba no arranca.</p>
+      <ul class="checklist">
+        <li><span class="check-icon">→</span> Al activar el riego, ¿escuchás el "clic" del contactor cerrando?</li>
+        <li><span class="check-icon">→</span> Si no cierra: verificá que el programador esté enviando señal a la bobina del contactor</li>
+        <li><span class="check-icon">→</span> Medí tensión en la bobina del contactor con el riego activado</li>
+      </ul>
+      <div class="bifurcacion">
+        <div class="bifur-mono">
+          <div class="bifur-label">🔌 Monofásica</div>
+          <div class="bifur-texto">Verificá también el <strong>capacitor</strong> — si está fallado la bomba intenta arrancar pero no lo logra (zumbido sin movimiento)</div>
+        </div>
+        <div class="bifur-tri">
+          <div class="bifur-label">⚡ Trifásica</div>
+          <div class="bifur-texto">Verificá las <strong>3 fases</strong> en la salida del contactor — la ausencia de una fase impide el arranque</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 4 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">4</div>
+      <div class="paso-titulo">Descartá problema mecánico</div>
+    </div>
+    <div class="paso-body">
+      <p>Si el tablero funciona correctamente pero la bomba no arranca, puede haber un bloqueo mecánico.</p>
+      <ul class="checklist">
+        <li><span class="check-icon">→</span> ¿La bomba zumba pero no gira? Puede estar trabada o el capacitor fallado (monofásica)</li>
+        <li><span class="check-icon">→</span> Intentá girar el eje manualmente si es accesible — con la corriente desconectada</li>
+        <li><span class="check-icon">→</span> Una bomba trabada provoca disparo inmediato de la protección</li>
+      </ul>
+      <div class="peligro">
+        <strong>🔴 PRECAUCIÓN:</strong> Nunca toques el interior del tablero con corriente. Siempre desconectá la alimentación antes de manipular componentes.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN BLOQUEADA -->
+  <div class="bloqueado">
+    <h3>Diagnóstico eléctrico completo con tester</h3>
+    <p>El diagnóstico preciso requiere medir con multímetro en puntos específicos del tablero. RiegoCheck te guía paso a paso con valores exactos.</p>
+    <ul>
+      <li>Medición de tensión fase a fase (trifásica)</li>
+      <li>Verificación de desequilibrio de fases (&gt;3% = problema)</li>
+      <li>Control de amperaje vs. placa del motor (&gt;15-20% = alarma)</li>
+      <li>Diagnóstico de capacitor en monofásicas</li>
+      <li>Árbol de decisión para tableros electromecánicos y Davansert</li>
+      <li>Protocolo para bomba que arranca pero no entrega agua</li>
+    </ul>
+    <p style="font-size:0.85rem; opacity:0.6;">Disponible en RiegoCheck — la app de diagnóstico para técnicos</p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h2>🔧 RiegoCheck</h2>
+    <p>Diagnóstico guiado completo para este y otros 8 problemas de riego.<br>Con valores de referencia, pasos ordenados y lógica de campo.</p>
+    <span class="precio">USD 4,99</span>
+    <a href="https://play.google.com/store/apps/details?id=io.github.gustavodiazmartinez.twa" class="btn-descarga">📱 Descargar en Google Play</a>
+  </div>
+
+  <!-- OTROS PROBLEMAS -->
+  <div class="otros">
+    <h3>Otros problemas frecuentes</h3>
+    <a href="electrovalvula-no-abre.html" class="problema-link">💧 Electroválvula que no abre</a>
+    <a href="poca-presion.html" class="problema-link">📉 Poca presión en el sistema</a>
+    <a href="#" class="problema-link">💧 Electroválvula no cierra</a>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 RiegoCheck — Diagnóstico profesional para sistemas de riego automático
+</footer>
+
+</body>
+</html>

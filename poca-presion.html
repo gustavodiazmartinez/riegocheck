@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poca presión en el sistema de riego — Diagnóstico paso a paso | RiegoCheck</title>
+  <meta name="description" content="Guía técnica profesional para diagnosticar baja presión en sistemas de riego automático. Causas hidráulicas y eléctricas, paso a paso.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --verde: #00b894;
+      --verde-oscuro: #007a63;
+      --azul: #0984e3;
+      --celeste: #00cec9;
+      --naranja: #e17055;
+      --rojo: #d63031;
+      --gris-oscuro: #1e272e;
+      --gris-medio: #2d3436;
+      --gris-texto: #636e72;
+      --fondo: #f5f6fa;
+      --blanco: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--fondo);
+      color: var(--gris-oscuro);
+      line-height: 1.7;
+    }
+
+    header {
+      background: var(--gris-oscuro);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 3px solid var(--verde);
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--blanco);
+      letter-spacing: 1px;
+    }
+
+    .logo span { color: var(--verde); }
+
+    .hero {
+      background: linear-gradient(135deg, #003d5b 0%, #00527a 100%);
+      color: var(--blanco);
+      padding: 48px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '📉';
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      font-size: 8rem;
+      opacity: 0.06;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--celeste);
+      color: var(--gris-oscuro);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      opacity: 0.85;
+      max-width: 600px;
+    }
+
+    .stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,206,201,0.2);
+      border: 1px solid var(--celeste);
+      border-radius: 8px;
+      padding: 8px 16px;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--celeste);
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .paso {
+      background: var(--blanco);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-left: 4px solid var(--celeste);
+    }
+
+    .paso-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+    }
+
+    .paso-numero {
+      background: var(--celeste);
+      color: var(--gris-oscuro);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .paso-titulo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--gris-oscuro);
+    }
+
+    .paso-body {
+      padding: 0 24px 24px;
+      color: var(--gris-medio);
+    }
+
+    .checklist { list-style: none; margin: 12px 0; }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.95rem;
+    }
+
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon { color: var(--celeste); font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+
+    .alerta {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.92rem;
+    }
+
+    .alerta strong { color: #856404; }
+
+    .bifurcacion {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .bifur-a {
+      background: #e3f9f9;
+      border: 1px solid var(--celeste);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+
+    .bifur-b {
+      background: #fdecea;
+      border: 1px solid var(--rojo);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+
+    .bifur-label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .bifur-a .bifur-label { color: var(--celeste); }
+    .bifur-b .bifur-label { color: var(--rojo); }
+    .bifur-texto { font-size: 0.9rem; }
+
+    /* CAUSAS GRID */
+    .causas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .causa-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid #dee2e6;
+    }
+
+    .causa-icon { font-size: 1.5rem; margin-bottom: 6px; }
+
+    .causa-titulo {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: var(--gris-oscuro);
+    }
+
+    .causa-desc { font-size: 0.82rem; color: var(--gris-texto); }
+
+    .bloqueado {
+      background: linear-gradient(135deg, var(--gris-oscuro), #2d3436);
+      border-radius: 12px;
+      padding: 32px 24px;
+      margin: 32px 0;
+      color: var(--blanco);
+      text-align: center;
+    }
+
+    .bloqueado::before {
+      content: '🔒';
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .bloqueado h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .bloqueado p { opacity: 0.8; font-size: 0.95rem; margin-bottom: 20px; }
+
+    .bloqueado ul {
+      list-style: none;
+      text-align: left;
+      display: inline-block;
+      margin-bottom: 24px;
+    }
+
+    .bloqueado ul li { padding: 4px 0; font-size: 0.9rem; opacity: 0.85; }
+    .bloqueado ul li::before { content: '→ '; color: var(--verde); font-weight: 700; }
+
+    .cta-box {
+      background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
+      border-radius: 16px;
+      padding: 36px 24px;
+      text-align: center;
+      color: var(--blanco);
+      margin: 32px 0;
+    }
+
+    .cta-box h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .cta-box p { opacity: 0.9; margin-bottom: 24px; font-size: 1rem; }
+
+    .precio {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .btn-descarga {
+      display: inline-block;
+      background: var(--blanco);
+      color: var(--verde-oscuro);
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+
+    .btn-descarga:hover { transform: scale(1.04); }
+
+    .otros { margin: 32px 0 16px; }
+
+    .otros h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      color: var(--gris-oscuro);
+      margin-bottom: 16px;
+    }
+
+    .problema-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--blanco);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: var(--gris-oscuro);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-left: 4px solid var(--azul);
+      font-weight: 500;
+      transition: transform 0.15s;
+    }
+
+    .problema-link:hover { transform: translateX(4px); }
+
+    footer {
+      background: var(--gris-oscuro);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 24px;
+      font-size: 0.85rem;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.7rem; }
+      .bifurcacion, .causas-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Riego<span>Check</span></div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">Guía Técnica Profesional</div>
+  <h1>Poca presión en el<br>sistema de riego</h1>
+  <p>El sistema funciona pero los aspersores o goteros no trabajan bien. Diagnóstico ordenado de las causas más frecuentes.</p>
+  <div class="stat">💧 La baja presión puede tener origen hidráulico, eléctrico o mecánico</div>
+</div>
+
+<div class="container">
+
+  <!-- PASO 1 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">1</div>
+      <div class="paso-titulo">¿El problema es en todo el sistema o en una zona?</div>
+    </div>
+    <div class="paso-body">
+      <p>Antes de buscar causas, determiná el alcance del problema — esto define el diagnóstico completo.</p>
+      <div class="bifurcacion">
+        <div class="bifur-a">
+          <div class="bifur-label">📍 Una zona</div>
+          <div class="bifur-texto">El problema está en esa electroválvula, sus tuberías o sus emisores. El resto del sistema es correcto.</div>
+        </div>
+        <div class="bifur-b">
+          <div class="bifur-label">🌐 Todo el sistema</div>
+          <div class="bifur-texto">El problema está antes de las electroválvulas — en la bomba, el suministro o la línea principal.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">2</div>
+      <div class="paso-titulo">Verificá el suministro de agua</div>
+    </div>
+    <div class="paso-body">
+      <p>Si el problema es en todo el sistema, empezá por la fuente.</p>
+      <ul class="checklist">
+        <li><span class="check-icon">→</span> ¿La llave de paso principal está completamente abierta?</li>
+        <li><span class="check-icon">→</span> Si hay bomba: ¿está funcionando correctamente? ¿Sin ruidos extraños?</li>
+        <li><span class="check-icon">→</span> Si hay tanque: ¿tiene agua suficiente? ¿El nivel es el habitual?</li>
+        <li><span class="check-icon">→</span> ¿Hay otras zonas funcionando al mismo tiempo que consuman presión?</li>
+      </ul>
+      <div class="alerta">
+        <strong>⚠️ En sistemas con bomba:</strong> Una bomba que arranca pero no entrega la presión habitual puede tener aire en la cañería, impulsor dañado o problemas eléctricos.
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">3</div>
+      <div class="paso-titulo">Buscá pérdidas o roturas en la red</div>
+    </div>
+    <div class="paso-body">
+      <p>Una pérdida de agua en la red consume presión antes de llegar a los emisores.</p>
+      <ul class="checklist">
+        <li><span class="check-icon">→</span> Recorrés visualmente la zona buscando zonas húmedas o encharcadas fuera de lo normal</li>
+        <li><span class="check-icon">→</span> Revisás las uniones y codos de las tuberías principales</li>
+        <li><span class="check-icon">→</span> Verificás que no haya electroválvulas perdiendo agua cuando están cerradas</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PASO 4 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">4</div>
+      <div class="paso-titulo">Revisá los emisores y filtros</div>
+    </div>
+    <div class="paso-body">
+      <p>Si el problema es en una zona específica, las causas más comunes son:</p>
+      <div class="causas-grid">
+        <div class="causa-card">
+          <div class="causa-icon">🔩</div>
+          <div class="causa-titulo">Filtros obstruidos</div>
+          <div class="causa-desc">Los filtros de línea o de cabezal acumulan sedimentos y reducen el caudal.</div>
+        </div>
+        <div class="causa-card">
+          <div class="causa-icon">💦</div>
+          <div class="causa-titulo">Aspersores rotos</div>
+          <div class="causa-desc">Un aspersor roto o trabado consume el caudal de toda la zona.</div>
+        </div>
+        <div class="causa-card">
+          <div class="causa-icon">🪱</div>
+          <div class="causa-titulo">Goteros obstruidos</div>
+          <div class="causa-desc">Los goteros se tapan con sedimentos, raíces o algas. Requieren limpieza o reemplazo.</div>
+        </div>
+        <div class="causa-card">
+          <div class="causa-icon">📏</div>
+          <div class="causa-titulo">Diseño hidráulico</div>
+          <div class="causa-desc">Demasiados emisores para la presión disponible. Problema de diseño original.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 5 -->
+  <div class="paso">
+    <div class="paso-header">
+      <div class="paso-numero">5</div>
+      <div class="paso-titulo">Verificá la electroválvula de esa zona</div>
+    </div>
+    <div class="paso-body">
+      <p>Si el problema es en una sola zona y los emisores están bien, la electroválvula puede no estar abriendo completamente.</p>
+      <ul class="checklist">
+        <li><span class="check-icon">→</span> Abrí la electroválvula manualmente — ¿mejora la presión?</li>
+        <li><span class="check-icon">→</span> Si mejora al abrir manual: la válvula no está abriendo del todo (diafragma sucio o solenoide con señal débil)</li>
+        <li><span class="check-icon">→</span> Limpiá la electroválvula siguiendo el protocolo de diagnóstico hidráulico</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECCIÓN BLOQUEADA -->
+  <div class="bloqueado">
+    <h3>Diagnóstico avanzado de presión</h3>
+    <p>Cuando las causas básicas están descartadas, el diagnóstico requiere medición de presión y análisis eléctrico de la bomba.</p>
+    <ul>
+      <li>Medición de presión estática vs dinámica</li>
+      <li>Diagnóstico de bomba que no entrega presión nominal</li>
+      <li>Verificación de amperaje vs. curva de la bomba</li>
+      <li>Detección de aire en cañería (cavitación)</li>
+      <li>Protocolo para sistemas con variador de frecuencia</li>
+      <li>Diagnóstico de pérdidas ocultas en red enterrada</li>
+    </ul>
+    <p style="font-size:0.85rem; opacity:0.6;">Disponible en RiegoCheck — la app de diagnóstico para técnicos</p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h2>🔧 RiegoCheck</h2>
+    <p>Diagnóstico guiado completo para este y otros 8 problemas de riego.<br>Con valores de referencia, pasos ordenados y lógica de campo.</p>
+    <span class="precio">USD 4,99</span>
+    <a href="https://play.google.com/store/apps/details?id=io.github.gustavodiazmartinez.twa" class="btn-descarga">📱 Descargar en Google Play</a>
+  </div>
+
+  <!-- OTROS PROBLEMAS -->
+  <div class="otros">
+    <h3>Otros problemas frecuentes</h3>
+    <a href="electrovalvula-no-abre.html" class="problema-link">💧 Electroválvula que no abre</a>
+    <a href="bomba-no-arranca.html" class="problema-link">⚡ Bomba de riego que no arranca</a>
+    <a href="#" class="problema-link">💧 Electroválvula que no cierra</a>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 RiegoCheck — Diagnóstico profesional para sistemas de riego automático
+</footer>
+
+</body>
+</html>

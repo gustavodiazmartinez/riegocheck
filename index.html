@@ -1,2116 +1,457 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<link rel="manifest"href="manifest.json">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Diagnóstico 7</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0d1117;
-    --bg2: #161b22;
-    --bg3: #1c2330;
-    --card: #1a2030;
-    --border: #2a3347;
-    --text: #e6edf3;
-    --text2: #8b949e;
-    --cyan: #00e5c8;
-    --green: #00c853;
-    --red: #f44336;
-    --orange: #ff9800;
-    --yellow: #ffc107;
-    --whatsapp: #25D366;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RiegoCheck — Diagnóstico profesional para sistemas de riego automático</title>
+  <meta name="description" content="Herramienta de diagnóstico guiado para técnicos de riego automático. Resolvé fallas en bombas, electroválvulas y presión con lógica de campo.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --verde: #00b894;
+      --verde-oscuro: #007a63;
+      --azul: #0984e3;
+      --naranja: #e17055;
+      --celeste: #00cec9;
+      --gris-oscuro: #1e272e;
+      --gris-medio: #2d3436;
+      --gris-texto: #636e72;
+      --fondo: #f5f6fa;
+      --blanco: #ffffff;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    min-height: 100vh;
-    max-width: 480px;
-    margin: 0 auto;
-    font-size: 15px;
-  }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--fondo);
+      color: var(--gris-oscuro);
+      line-height: 1.7;
+    }
 
-  /* ── HEADER ── */
-  header {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-  .logo-icon {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, #00b4d8, #00e5c8);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-  .logo-text {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-  }
-  .logo-text span:first-child { color: var(--cyan); }
-  .logo-text span:last-child { color: var(--text); }
+    /* HEADER */
+    header {
+      background: var(--gris-oscuro);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--verde);
+    }
 
-  .btn-back {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text2);
-    padding: 7px 14px;
-    border-radius: 8px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    gap: 6px;
-  }
-  .btn-back.visible { display: flex; }
-  .btn-back:active { background: var(--border); }
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--blanco);
+      letter-spacing: 1px;
+    }
 
-  /* ── BREADCRUMB ── */
-  .breadcrumb {
-    padding: 10px 16px;
-    font-size: 12px;
-    color: var(--text2);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    display: none;
-  }
-  .breadcrumb.visible { display: flex; }
-  .breadcrumb span { color: var(--text2); }
-  .breadcrumb .sep { color: var(--border); }
-  .breadcrumb .current { color: var(--text); }
+    .logo span { color: var(--verde); }
 
-  /* ── PROGRESS BAR ── */
-  .progress-bar {
-    height: 3px;
-    background: var(--border);
-    display: none;
-  }
-  .progress-bar.visible { display: block; }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--cyan), var(--green));
-    transition: width 0.4s ease;
-  }
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--gris-oscuro) 0%, #2d3436 100%);
+      color: var(--blanco);
+      padding: 60px 24px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-  /* ── HOME ── */
-  #screen-home { display: block; }
-  .home-header {
-    padding: 32px 20px 24px;
-    text-align: center;
-  }
-  .home-header h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 10px;
-  }
-  .home-header p {
-    color: var(--text2);
-    font-size: 14px;
-    line-height: 1.5;
-  }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 70% 50%, rgba(0,184,148,0.12) 0%, transparent 60%);
+    }
 
-  .modules-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 0 12px 24px;
-  }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0,184,148,0.2);
+      border: 1px solid var(--verde);
+      color: var(--verde);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
 
-  .module-card {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 16px 14px 14px;
-    cursor: pointer;
-    border-top: 3px solid transparent;
-    transition: transform 0.15s, background 0.15s;
-    user-select: none;
-  }
-  .module-card:active { transform: scale(0.97); background: var(--bg3); }
-  .module-card .icon { font-size: 32px; margin-bottom: 10px; display: block; }
-  .module-card .label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.3;
-    color: var(--text);
-  }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      position: relative;
+    }
 
-  /* ── DIAGNOSTIC SCREEN ── */
-  .screen { display: none; padding: 16px; }
-  .screen.active { display: block; }
+    .hero h1 span { color: var(--verde); }
 
-  /* Camino recorrido */
-  .path-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-  .path-card-title {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    color: var(--text2);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .path-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 5px 0;
-    border-bottom: 1px solid var(--border);
-    gap: 10px;
-  }
-  .path-item:last-child { border-bottom: none; }
-  .path-question { color: var(--text2); font-size: 13px; flex: 1; }
-  .path-sep { color: var(--border); font-size: 13px; padding: 0 4px; }
-  .path-answer { color: var(--cyan); font-size: 13px; font-weight: 600; text-align: right; }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+      max-width: 520px;
+      margin: 0 auto 32px;
+      position: relative;
+    }
 
-  /* Pregunta card */
-  .question-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px 16px;
-    margin-bottom: 14px;
-  }
-  .question-module-tag {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    color: var(--cyan);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .question-text {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 1.25;
-    margin-bottom: 12px;
-  }
-  .question-hint {
-    border-left: 3px solid var(--cyan);
-    padding-left: 12px;
-    color: var(--text2);
-    font-size: 13px;
-    line-height: 1.5;
-    margin-bottom: 12px;
-  }
-  .question-tip {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 12px;
-    color: var(--cyan);
-    cursor: pointer;
-  }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      position: relative;
+    }
 
-  /* Opciones */
-  .option-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .option-btn:active { background: var(--bg3); border-color: var(--cyan); }
-  .option-btn .opt-icon { font-size: 26px; flex-shrink: 0; }
-  .option-btn .opt-text {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.25;
-  }
+    .stat-item {
+      text-align: center;
+    }
 
-  /* ── RESULTADO ── */
-  .result-card {
-    border-radius: 14px;
-    padding: 20px 18px;
-    margin-bottom: 14px;
-    border: 1px solid transparent;
-  }
-  .result-card.urgent {
-    background: rgba(244, 67, 54, 0.08);
-    border-color: rgba(244, 67, 54, 0.4);
-  }
-  .result-card.warning {
-    background: rgba(255, 152, 0, 0.08);
-    border-color: rgba(255, 152, 0, 0.4);
-  }
-  .result-card.ok {
-    background: rgba(0, 200, 83, 0.08);
-    border-color: rgba(0, 200, 83, 0.4);
-  }
-  .result-card.info {
-    background: rgba(0, 229, 200, 0.06);
-    border-color: rgba(0, 229, 200, 0.3);
-  }
+    .stat-numero {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--verde);
+      display: block;
+    }
 
-  .result-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .result-badge.urgent { background: rgba(244,67,54,0.2); color: #ff6b6b; }
-  .result-badge.warning { background: rgba(255,152,0,0.2); color: #ffb74d; }
-  .result-badge.ok { background: rgba(0,200,83,0.2); color: #69f0ae; }
-  .result-badge.info { background: rgba(0,229,200,0.15); color: var(--cyan); }
+    .stat-label {
+      font-size: 0.8rem;
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-  .result-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 14px;
-  }
+    /* ARTÍCULOS */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
 
-  .urgency-line {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .urgency-line.urgent { color: var(--red); }
-  .urgency-line.warning { color: var(--orange); }
-  .urgency-line.ok { color: var(--green); }
+    .seccion-titulo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gris-texto);
+      margin-bottom: 20px;
+    }
 
-  .steps-list { list-style: none; }
-  .step-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-  }
-  .step-item:last-child { border-bottom: none; }
-  .step-num {
-    background: #1e3a5f;
-    color: #60a5fa;
-    font-weight: 700;
-    font-size: 13px;
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .step-text { font-size: 14px; line-height: 1.5; color: var(--text); }
+    .articulo-card {
+      background: var(--blanco);
+      border-radius: 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--gris-oscuro);
+      display: block;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-  /* Herramientas */
-  .tools-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-  .tools-title {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    color: var(--text2);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .tools-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .tool-tag {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 5px 14px;
-    font-size: 13px;
-    color: var(--text);
-  }
+    .articulo-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
 
-  /* ── BOTTOM BUTTONS ── */
-  .bottom-actions {
-    display: none;
-    padding: 0 0 8px;
-    gap: 10px;
-    flex-direction: column;
-  }
-  .bottom-actions.visible { display: flex; }
+    .articulo-top {
+      padding: 24px 24px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
 
-  .bottom-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+    .articulo-icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
 
-  .btn-restart {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 14px;
-    border-radius: 12px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-restart:active { background: var(--bg3); }
+    .articulo-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
 
-  .btn-home {
-    background: var(--cyan);
-    border: none;
-    color: #0d1117;
-    padding: 14px;
-    border-radius: 12px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-home:active { opacity: 0.85; }
+    .badge-verde { background: #d4f5ed; color: var(--verde-oscuro); }
+    .badge-naranja { background: #fdeae4; color: #c0392b; }
+    .badge-celeste { background: #d0f5f4; color: #007a78; }
 
-  .btn-whatsapp {
-    background: var(--whatsapp);
-    border: none;
-    color: #fff;
-    padding: 15px;
-    border-radius: 12px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-  }
-  .btn-whatsapp:active { opacity: 0.85; }
-</style>
+    .articulo-titulo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .articulo-desc {
+      font-size: 0.92rem;
+      color: var(--gris-texto);
+      line-height: 1.5;
+    }
+
+    .articulo-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      margin-top: 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .articulo-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: #f0f0f0;
+      color: var(--gris-texto);
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .articulo-link {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--verde);
+    }
+
+    /* APP CTA */
+    .app-cta {
+      background: linear-gradient(135deg, var(--gris-oscuro), var(--gris-medio));
+      border-radius: 16px;
+      padding: 40px 28px;
+      text-align: center;
+      color: var(--blanco);
+      margin: 40px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-cta::before {
+      content: '🔧';
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      font-size: 8rem;
+      opacity: 0.05;
+    }
+
+    .app-cta h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .app-cta p {
+      opacity: 0.8;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .beneficios {
+      list-style: none;
+      margin: 20px auto;
+      display: inline-block;
+      text-align: left;
+    }
+
+    .beneficios li {
+      padding: 5px 0;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .beneficios li::before {
+      content: '✓ ';
+      color: var(--verde);
+      font-weight: 700;
+    }
+
+    .precio-grande {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--verde);
+      display: block;
+      margin: 20px 0 8px;
+    }
+
+    .precio-sub {
+      font-size: 0.8rem;
+      opacity: 0.5;
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .btn-comprar {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--blanco);
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 16px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn-comprar:hover {
+      transform: scale(1.04);
+      background: var(--verde-oscuro);
+    }
+
+    .disponible {
+      font-size: 0.8rem;
+      opacity: 0.5;
+      margin-top: 12px;
+      display: block;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--gris-oscuro);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 28px;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { gap: 20px; }
+      .articulo-top { flex-direction: column; gap: 8px; }
+    }
+  </style>
 </head>
 <body>
 
 <header>
-  <a class="logo" href="#" onclick="goHome(); return false;">
-    <div class="logo-icon">💧</div>
-    <div class="logo-text">
-      <span>Diagnóstico</span><span> 7</span>
-    </div>
-  </a>
-  <button class="btn-back" id="btn-back" onclick="goBack()">← Atrás</button>
+  <div class="logo">Riego<span>Check</span></div>
 </header>
 
-<div class="breadcrumb" id="breadcrumb"></div>
-<div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-
-<!-- ════════════════════════════════════
-     PANTALLA INICIO
-════════════════════════════════════ -->
-<div id="screen-home">
-  <div class="home-header">
-    <h1>¿Cuál es el<br>problema principal?</h1>
-    <p>Seleccioná el problema que encontrás en el sistema de riego automático</p>
-  </div>
-  <div class="modules-grid">
-
-    <div class="module-card" style="border-top-color:#ef4444" onclick="startModule('bomba-mono')">
-      <span class="icon">⚡</span>
-      <span class="label">Bomba monofásica no arranca</span>
+<div class="hero">
+  <div class="hero-badge">Para técnicos de riego automático</div>
+  <h1>Diagnosticá fallas<br>de riego <span>como un experto</span></h1>
+  <p>Guías técnicas profesionales para los problemas más frecuentes en sistemas de riego automático residencial.</p>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-numero">9</span>
+      <span class="stat-label">Módulos de diagnóstico</span>
     </div>
-
-    <div class="module-card" style="border-top-color:#3b82f6" onclick="startModule('bomba-tri')">
-      <span class="icon">🔌</span>
-      <span class="label">Bomba trifásica no arranca</span>
+    <div class="stat-item">
+      <span class="stat-numero">100%</span>
+      <span class="stat-label">Lógica de campo</span>
     </div>
-
-    <div class="module-card" style="border-top-color:#22c55e" onclick="startModule('ev-no-abre')">
-      <span class="icon">🚰</span>
-      <span class="label">Una válvula no abre</span>
+    <div class="stat-item">
+      <span class="stat-numero">USD 4,99</span>
+      <span class="stat-label">Pago único</span>
     </div>
-
-    <div class="module-card" style="border-top-color:#f97316" onclick="startModule('ev-no-cierra')">
-      <span class="icon">🔴</span>
-      <span class="label">Una válvula no cierra</span>
-    </div>
-
-    <div class="module-card" style="border-top-color:#a78bfa" onclick="startModule('poca-presion')">
-      <span class="icon">📉</span>
-      <span class="label">Hay poca presión</span>
-    </div>
-
-    <div class="module-card" style="border-top-color:#06b6d4" onclick="startModule('bomba-no-agua')">
-      <span class="icon">💧</span>
-      <span class="label">Bomba arranca pero no entrega agua</span>
-    </div>
-
-    <div class="module-card" style="border-top-color:#eab308" onclick="startModule('aspersor')">
-      <span class="icon">💦</span>
-      <span class="label">Aspersor / Gotero no funciona bien</span>
-    </div>
-
-    <div class="module-card" style="border-top-color:#ec4899" onclick="startModule('programador')">
-      <span class="icon">🖥️</span>
-      <span class="label">El programador falla</span>
-    </div>
-
-    <div class="module-card" style="border-top-color:#14b8a6" onclick="startModule('fuga')">
-      <span class="icon">🌊</span>
-      <span class="label">Hay una pérdida de agua</span>
-    </div>
-
   </div>
 </div>
 
-<!-- ════════════════════════════════════
-     PANTALLA DIAGNÓSTICO (dinámica)
-════════════════════════════════════ -->
-<div id="screen-diag" class="screen"></div>
+<div class="container">
 
-<script>
-// ═══════════════════════════════════════════════
-// DATOS DE MÓDULOS
-// ═══════════════════════════════════════════════
-const MODULES = {
+  <div class="seccion-titulo">Guías técnicas gratuitas</div>
 
-  // ── BOMBA MONOFÁSICA ──────────────────────────
-  'bomba-mono': {
-    name: 'Bomba Monofásica',
-    color: '#ef4444',
-    steps: [
-      {
-        id: 'tipo-tablero',
-        tag: 'BOMBA MONOFÁSICA',
-        question: '¿Qué tipo de tablero o protección tiene la bomba?',
-        hint: 'Observá el gabinete eléctrico. Determiná qué componentes tiene.',
-        options: [
-          { icon: '⚙️', text: 'Electromecánico (contactor + térmica)', next: 'voltaje-borne-mono' },
-          { icon: '🔲', text: 'Caja simple (capacitor + fusible + tecla)', next: 'caja-simple-arranca' },
-          { icon: '💡', text: 'Protector Davansert (electrónico)', next: 'davansert-led' },
-        ]
-      },
-      {
-        id: 'voltaje-borne-mono',
-        tag: 'BOMBA MONOFÁSICA · ELECTROMECÁNICO',
-        question: '¿Cuál es el voltaje en los bornes del motor?',
-        hint: 'Medí fase-neutro directamente en la bornera del motor. Normal: 220–240 V.',
-        options: [
-          { icon: '✅', text: '220–240 V', next: 'capacitor' },
-          { icon: '🔴', text: '< 200 V', next: 'voltaje-tablero-mono' },
-          { icon: '⬇️', text: '0 V (sin tensión)', next: 'contactor-mono' },
-        ]
-      },
-      {
-        id: 'voltaje-tablero-mono',
-        tag: 'BOMBA MONOFÁSICA · ALIMENTACIÓN',
-        question: '¿Cuál es el voltaje en el tablero eléctrico (entrada)?',
-        hint: 'Medí fase-neutro en la entrada del tablero, antes del disyuntor.',
-        options: [
-          { icon: '✅', text: '220–240 V', next: 'result', data: { result: 'caida-tension-linea', severity: 'urgent', tools: ['Voltímetro', 'Pinza amperimétrica', 'Destornillador'] } },
-          { icon: '🔴', text: '< 200 V', next: 'result', data: { result: 'baja-tension-red', severity: 'urgent', tools: ['Voltímetro'] } },
-        ]
-      },
-      {
-        id: 'contactor-mono',
-        tag: 'BOMBA MONOFÁSICA · TABLERO',
-        question: '¿El contactor está energizado (bobina con tensión)?',
-        hint: 'Con el sistema en marcha: medí la tensión en la bobina del contactor (A1-A2). Debe tener 220 V.',
-        options: [
-          { icon: '✅', text: 'Sí, bobina con 220 V', next: 'result', data: { result: 'contactor-contactos-quemados', severity: 'urgent', tools: ['Voltímetro', 'Destornillador'] } },
-          { icon: '🔴', text: 'No, bobina sin tensión', next: 'termica-mono' },
-        ]
-      },
-      {
-        id: 'termica-mono',
-        tag: 'BOMBA MONOFÁSICA · TABLERO',
-        question: '¿La relé térmica está en posición RUN (no disparada)?',
-        hint: 'Verificá visualmente la térmica. Si está disparada, el botón de reset estará salido.',
-        options: [
-          { icon: '✅', text: 'Sí, en RUN', next: 'result', data: { result: 'falla-control-mono', severity: 'warning', tools: ['Voltímetro', 'Destornillador'] } },
-          { icon: '🔴', text: 'No, está disparada', next: 'result', data: { result: 'termica-disparada-mono', severity: 'warning', tools: ['Voltímetro', 'Pinza amperimétrica', 'Destornillador'] } },
-        ]
-      },
-      {
-        id: 'capacitor',
-        tag: 'BOMBA MONOFÁSICA · ARRANQUE',
-        question: '¿El motor intenta arrancar (zumba) pero no gira?',
-        hint: 'Escuchá el motor. Si zumba sin girar, el capacitor de arranque puede estar fallando.',
-        options: [
-          { icon: '🔊', text: 'Sí, zumba pero no gira', next: 'result', data: { result: 'capacitor-falla', severity: 'urgent', tools: ['Capacímetro o multímetro', 'Destornillador'] } },
-          { icon: '🔇', text: 'No arranca ni zumba', next: 'result', data: { result: 'motor-bloqueado-mono', severity: 'urgent', tools: ['Voltímetro', 'Pinza amperimétrica', 'Destornillador'] } },
-          { icon: '⚡', text: 'Arranca y gira con carga normal', next: 'result', data: { result: 'ok-mono', severity: 'ok', tools: [] } },
-        ]
-      },
-      {
-        id: 'caja-simple-arranca',
-        tag: 'BOMBA MONOFÁSICA · CAJA SIMPLE',
-        question: '¿El motor intenta arrancar o zumba?',
-        hint: 'Con la tecla en ON: escuchá si el motor intenta girar. Un zumbido indica tensión pero sin giro.',
-        options: [
-          { icon: '🔊', text: 'Zumba pero no gira', next: 'result', data: { result: 'capacitor-falla', severity: 'urgent', tools: ['Capacímetro o multímetro', 'Destornillador'] } },
-          { icon: '🔇', text: 'Nada, sin reacción', next: 'caja-simple-voltaje' },
-          { icon: '🔥', text: 'Arranca pero cae enseguida (fusible salta)', next: 'result', data: { result: 'fusible-falla', severity: 'urgent', tools: ['Voltímetro', 'Fusibles de repuesto'] } },
-        ]
-      },
-      {
-        id: 'caja-simple-voltaje',
-        tag: 'BOMBA MONOFÁSICA · CAJA SIMPLE',
-        question: '¿Hay voltaje en los bornes de salida de la caja?',
-        hint: 'Con la tecla en ON medí la salida de la caja hacia el motor. Normal: 220–240 V.',
-        options: [
-          { icon: '✅', text: '220–240 V presentes', next: 'result', data: { result: 'motor-bloqueado-mono', severity: 'urgent', tools: ['Voltímetro', 'Pinza amperimétrica'] } },
-          { icon: '🔴', text: 'Sin voltaje o muy bajo', next: 'result', data: { result: 'falla-caja-simple', severity: 'urgent', tools: ['Voltímetro', 'Destornillador'] } },
-        ]
-      },
-      {
-        id: 'davansert-led',
-        tag: 'BOMBA MONOFÁSICA · DAVANSERT',
-        question: '¿Qué LED está encendido en el protector Davansert?',
-        hint: 'Observá los indicadores LED del protector electrónico Davansert.',
-        options: [
-          { icon: '🟢', text: 'LED verde (RUN / normal)', next: 'davansert-motor' },
-          { icon: '🔴', text: 'LED rojo (falla / protección)', next: 'davansert-tipo-falla' },
-          { icon: '🟡', text: 'LED amarillo o intermitente', next: 'result', data: { result: 'davansert-espera', severity: 'warning', tools: ['Multímetro'] } },
-          { icon: '⚫', text: 'Ningún LED encendido', next: 'result', data: { result: 'davansert-sin-tension', severity: 'urgent', tools: ['Voltímetro', 'Destornillador'] } },
-        ]
-      },
-      {
-        id: 'davansert-motor',
-        tag: 'BOMBA MONOFÁSICA · DAVANSERT',
-        question: 'LED verde encendido. ¿El motor gira?',
-        hint: 'El Davansert habilita la salida pero el motor podría tener falla mecánica.',
-        options: [
-          { icon: '🔊', text: 'Zumba pero no gira', next: 'result', data: { result: 'capacitor-falla', severity: 'urgent', tools: ['Capacímetro o multímetro', 'Destornillador'] } },
-          { icon: '🔇', text: 'No gira ni zumba', next: 'result', data: { result: 'motor-bloqueado-mono', severity: 'urgent', tools: ['Voltímetro', 'Pinza amperimétrica'] } },
-        ]
-      },
-      {
-        id: 'davansert-tipo-falla',
-        tag: 'BOMBA MONOFÁSICA · DAVANSERT',
-        question: '¿Cuántos destellos tiene el LED rojo?',
-        hint: 'Contá los parpadeos del LED rojo. Cada código indica una falla específica.',
-        options: [
-          { icon: '1️⃣', text: '1 destello — Baja tensión', next: 'result', data: { result: 'davansert-baja-tension', severity: 'urgent', tools: ['Voltímetro'] } },
-          { icon: '2️⃣', text: '2 destellos — Sobretensión', next: 'result', data: { result: 'davansert-sobretension', severity: 'urgent', tools: ['Voltímetro'] } },
-          { icon: '3️⃣', text: '3 destellos — Sobrecarga / térmica', next: 'result', data: { result: 'davansert-sobrecarga', severity: 'urgent', tools: ['Pinza amperimétrica', 'Voltímetro'] } },
-          { icon: '4️⃣', text: '4+ destellos / no identificado', next: 'result', data: { result: 'davansert-falla-interna', severity: 'urgent', tools: ['Voltímetro', 'Destornillador'] } },
-        ]
-      },
-    ],
-    results: {
-      'caida-tension-linea': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Caída de tensión en la línea',
-        urgency: { level: 'urgent', text: 'Parar sistema y reparar ahora' },
-        steps: [
-          'Medir sección del cable (puede ser insuficiente para la distancia)',
-          'Revisar empalmes, bornes flojos o corroídos',
-          'Calcular sección mínima según longitud y corriente nominal',
-        ]
-      },
-      'baja-tension-red': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Baja tensión en la red eléctrica',
-        urgency: { level: 'urgent', text: 'Parar equipo y contactar distribuidora' },
-        steps: [
-          'Registrar el voltaje medido y el horario',
-          'Verificar si el problema es permanente o puntual (horas pico)',
-          'Reportar a la distribuidora eléctrica',
-          'No operar la bomba con tensión inferior a 200 V',
-        ]
-      },
-      'contactor-contactos-quemados': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Contactos del contactor quemados',
-        urgency: { level: 'urgent', text: 'Reemplazar contactor antes de operar' },
-        steps: [
-          'Cortar tensión antes de abrir el tablero',
-          'Inspeccionar visualmente los contactos principales del contactor',
-          'Si están ennegrecidos o con arco: reemplazar el contactor completo',
-          'Verificar que el nuevo contactor tenga la misma capacidad en amperios',
-        ]
-      },
-      'termica-disparada-mono': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Relé térmica disparada',
-        urgency: { level: 'warning', text: 'Reparar esta semana' },
-        steps: [
-          'Resetear la térmica (botón de reset)',
-          'Antes de volver a arrancar, verificar la causa: sobrecarga o falla mecánica',
-          'Si se dispara repetidamente: verificar corriente del motor con pinza amperimétrica',
-          'Ajustar la corriente de disparo al valor nominal del motor (plaqueta)',
-        ]
-      },
-      'falla-control-mono': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Falla en el circuito de control',
-        urgency: { level: 'warning', text: 'Reparar esta semana' },
-        steps: [
-          'Verificar tensión en la bobina del contactor: debe tener 220 V en marcha',
-          'Revisar el programador o controlador: ¿envía señal de arranque?',
-          'Verificar continuidad del cableado de control (programador → contactor)',
-          'Revisar fusible de control si existe',
-        ]
-      },
-      'capacitor-falla': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Capacitor de arranque defectuoso',
-        urgency: { level: 'urgent', text: 'Reemplazar antes de operar' },
-        steps: [
-          'Cortar tensión y descargar el capacitor antes de manipular',
-          'Medir capacitancia con capacímetro: comparar con valor de placa (±10%)',
-          'Un capacitor hinchado o con electrolito derramado debe reemplazarse',
-          'Reemplazar por uno del mismo valor en µF y tensión nominal igual o superior',
-        ]
-      },
-      'motor-bloqueado-mono': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Motor bloqueado o bobinado en falla',
-        urgency: { level: 'urgent', text: 'Parar sistema y revisar mecánica' },
-        steps: [
-          'Cortar tensión y verificar si el eje gira libremente a mano',
-          'Si el eje está bloqueado: revisar bomba por cuerpo extraño o desgaste del sello',
-          'Medir resistencia de bobinados (∞ = bobina cortada, 0 Ω = en cortocircuito)',
-          'Si bobinado en falla: enviar a reparación o reemplazar motor',
-        ]
-      },
-      'falla-caja-simple': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Falla en caja simple de control',
-        urgency: { level: 'urgent', text: 'Reparar antes de operar' },
-        steps: [
-          'Verificar que la tecla funciona correctamente (continuidad)',
-          'Revisar fusible: puede estar fundido (medir continuidad)',
-          'Si fusible fundido repetidamente: buscar cortocircuito en cableado o motor',
-          'Verificar tensión de entrada a la caja (220–240 V)',
-        ]
-      },
-      'fusible-falla': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Fusible que se funde al arrancar',
-        urgency: { level: 'urgent', text: 'Reparar antes de operar' },
-        steps: [
-          'No reemplazar el fusible sin investigar la causa',
-          'Medir corriente de arranque con pinza amperimétrica (puede ser muy alta)',
-          'Verificar capacitor: si está en corto, causa sobrecorriente al arrancar',
-          'Verificar que el fusible sea del calibre adecuado para el motor',
-        ]
-      },
-      'davansert-baja-tension': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Baja tensión detectada por Davansert',
-        urgency: { level: 'urgent', text: 'Parar equipo hasta normalizar tensión' },
-        steps: [
-          'Medir tensión en los bornes de entrada del Davansert',
-          'Si la tensión es < 195 V: el Davansert bloquea correctamente para proteger el motor',
-          'Verificar si la caída ocurre en la red o en el cableado hasta el tablero',
-          'Solucionar la causa de baja tensión antes de rehabilitar',
-        ]
-      },
-      'davansert-sobretension': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Sobretensión detectada por Davansert',
-        urgency: { level: 'urgent', text: 'Parar equipo y verificar red' },
-        steps: [
-          'Medir tensión en los bornes de entrada del Davansert',
-          'Si supera 260 V: reportar a la distribuidora eléctrica',
-          'No rehabilitar el motor hasta que la tensión esté dentro del rango normal',
-        ]
-      },
-      'davansert-sobrecarga': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Sobrecarga detectada por Davansert',
-        urgency: { level: 'urgent', text: 'Verificar bomba y motor antes de arrancar' },
-        steps: [
-          'Verificar que el eje de la bomba gire libremente',
-          'Medir corriente con pinza amperimétrica al arrancar',
-          'Comparar con la corriente nominal en la plaqueta del motor',
-          'Si la corriente supera nominal: revisar bomba, sello mecánico o rodamientos',
-        ]
-      },
-      'davansert-falla-interna': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Falla interna del Davansert',
-        urgency: { level: 'urgent', text: 'Reemplazar equipo de protección' },
-        steps: [
-          'Documentar el código de falla (cantidad de destellos)',
-          'El Davansert no tiene reparación en campo: debe reemplazarse',
-          'Opción recomendada: reemplazar por tablero electromecánico (disyuntor + térmica + contactor)',
-          'Esto brinda mayor robustez y facilidad de diagnóstico futuro',
-        ]
-      },
-      'davansert-espera': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Davansert en modo espera o retardo',
-        urgency: { level: 'warning', text: 'Esperar y observar' },
-        steps: [
-          'El Davansert puede estar en período de espera después de una falla',
-          'Algunos modelos esperan 2–5 minutos antes de rehabilitar el arranque',
-          'Si después de 10 minutos el LED no cambia: consultar manual del modelo específico',
-          'Si el problema persiste: verificar tensión de alimentación',
-        ]
-      },
-      'davansert-sin-tension': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Sin tensión en el Davansert',
-        urgency: { level: 'urgent', text: 'Verificar alimentación eléctrica' },
-        steps: [
-          'Verificar tensión en los bornes de entrada del Davansert (debe ser 220–240 V)',
-          'Verificar el disyuntor o interruptor principal del circuito',
-          'Revisar el cableado desde el tablero principal hasta el Davansert',
-        ]
-      },
-      'ok-mono': {
-        severity: 'ok',
-        badge: 'SISTEMA OK',
-        title: 'Bomba funcionando normalmente',
-        urgency: { level: 'ok', text: 'Sin acción urgente requerida' },
-        steps: [
-          'El diagnóstico no detectó fallas en este recorrido',
-          'Si el problema persiste, verificar la parte hidráulica (bomba, válvulas, filtros)',
-          'Registrar los valores medidos como referencia para próximas revisiones',
-        ]
-      },
-    }
-  },
-
-  // ── BOMBA TRIFÁSICA ───────────────────────────
-  'bomba-tri': {
-    name: 'Bomba Trifásica',
-    color: '#3b82f6',
-    steps: [
-      {
-        id: 'voltaje-fases',
-        tag: 'BOMBA TRIFÁSICA · ALIMENTACIÓN',
-        question: '¿Cuál es el voltaje entre fases en los bornes del motor?',
-        hint: 'Medí entre cada par de fases directamente en la bornera del motor. Normal en sistemas 220 V fase-neutro: 380–400 V entre fases.',
-        tip: '▼ ¿Cómo mido tensión entre fases?',
-        options: [
-          { icon: '✅', text: 'Las 3 fases con 380–400 V', next: 'guardamotor' },
-          { icon: '🔴', text: 'Una o dos fases en 0 V o bajas', next: 'result', data: { result: 'fase-perdida', severity: 'urgent', tools: ['Voltímetro', 'Pinza amperimétrica'] } },
-          { icon: '⬇️', text: 'Las 3 fases bajas (< 340 V)', next: 'result', data: { result: 'baja-tension-tri', severity: 'urgent', tools: ['Voltímetro'] } },
-        ]
-      },
-      {
-        id: 'guardamotor',
-        tag: 'BOMBA TRIFÁSICA · PROTECCIÓN',
-        question: '¿El relé térmico / guardamotor está en posición RUN?',
-        hint: 'Verificá visualmente el guardamotor. Si disparó, el botón de reset estará salido o en posición T (Trip).',
-        options: [
-          { icon: '✅', text: 'Sí, en RUN', next: 'contactor-tri' },
-          { icon: '🔴', text: 'No, está disparado', next: 'result', data: { result: 'guardamotor-disparado', severity: 'warning', tools: ['Voltímetro', 'Pinza amperimétrica', 'Destornillador'] } },
-        ]
-      },
-      {
-        id: 'contactor-tri',
-        tag: 'BOMBA TRIFÁSICA · TABLERO',
-        question: '¿El contactor está energizado cuando el sistema debe estar en marcha?',
-        hint: 'Verificá si el contactor principal cierra al recibir la orden de arranque del programador.',
-        options: [
-          { icon: '✅', text: 'Sí, contactor cierra', next: 'gira-bien' },
-          { icon: '🔴', text: 'No, contactor no cierra', next: 'result', data: { result: 'falla-control-tri', severity: 'warning', tools: ['Voltímetro', 'Destornillador'] } },
-        ]
-      },
-      {
-        id: 'gira-bien',
-        tag: 'BOMBA TRIFÁSICA · ROTACIÓN',
-        question: '¿El motor gira en el sentido correcto?',
-        hint: 'Verificar la dirección de rotación es crucial en trifásico. Si giró al revés alguna vez o se intervino el cableado, puede estar invertido.',
-        options: [
-          { icon: '✅', text: 'Sí, gira correctamente', next: 'amperaje-tri' },
-          { icon: '🔄', text: 'No, gira al revés', next: 'result', data: { result: 'gira-al-reves', severity: 'urgent', tools: ['Destornillador', 'Voltímetro'] } },
-          { icon: '❓', text: 'No sé / no puedo verificar', next: 'amperaje-tri' },
-        ]
-      },
-      {
-        id: 'amperaje-tri',
-        tag: 'BOMBA TRIFÁSICA · CARGA',
-        question: '¿Cómo es el amperaje en cada fase comparado con la placa del motor?',
-        hint: 'Medí con pinza amperimétrica en cada fase. Un amperaje >15–20% sobre el valor de placa indica problema.',
-        options: [
-          { icon: '✅', text: 'Normal (dentro del 15% del nominal)', next: 'result', data: { result: 'ok-tri', severity: 'ok', tools: [] } },
-          { icon: '📈', text: 'Alto en las 3 fases (>15–20% sobre placa)', next: 'result', data: { result: 'sobrecarga-tri', severity: 'urgent', tools: ['Pinza amperimétrica', 'Voltímetro'] } },
-          { icon: '⚖️', text: 'Muy desigual entre fases (>3% desequilibrio)', next: 'result', data: { result: 'desequilibrio-fases', severity: 'urgent', tools: ['Pinza amperimétrica', 'Voltímetro'] } },
-        ]
-      },
-    ],
-    results: {
-      'fase-perdida': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Pérdida de fase',
-        urgency: { level: 'urgent', text: 'Parar sistema de inmediato' },
-        steps: [
-          'Parar la bomba de inmediato: operar con fase perdida destruye el motor',
-          'Verificar el disyuntor trifásico o llave termomagnética: puede tener un polo abierto',
-          'Revisar los cables de alimentación: buscar cable cortado o conexión suelta',
-          'Verificar la acometida de la distribuidora: puede ser falla en la red externa',
-        ]
-      },
-      'baja-tension-tri': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Baja tensión en las 3 fases',
-        urgency: { level: 'urgent', text: 'Parar equipo hasta normalizar tensión' },
-        steps: [
-          'No operar con tensión inferior a 340 V entre fases',
-          'Verificar si la caída es en la red o en el cableado interno',
-          'Medir en la acometida y comparar con la medición en el tablero del motor',
-          'Si la caída está en el cableado: verificar sección de los cables y empalmes',
-        ]
-      },
-      'guardamotor-disparado': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Relé térmico / guardamotor disparado',
-        urgency: { level: 'warning', text: 'Reparar esta semana' },
-        steps: [
-          'Resetear el relé térmico (botón de reset en el guardamotor)',
-          'Antes de volver a arrancar verificar la causa: sobrecarga, atasco mecánico o baja tensión prolongada',
-          'Si se dispara repetidamente: ajustar corriente de disparo al valor nominal del motor',
-          'El guardamotor bien ajustado es la principal protección del motor trifásico',
-        ]
-      },
-      'falla-control-tri': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Falla en el circuito de control',
-        urgency: { level: 'warning', text: 'Revisar antes de la próxima operación' },
-        steps: [
-          'Verificar tensión en la bobina del contactor: debe tener tensión (220 V o 24 V según diseño)',
-          'Revisar el programador: ¿envía señal de arranque?',
-          'Verificar continuidad del cableado de control',
-          'Revisar contactos auxiliares y bloqueos de seguridad (flotante, presostato)',
-        ]
-      },
-      'gira-al-reves': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Motor girando al revés',
-        urgency: { level: 'urgent', text: 'Corregir antes de operar' },
-        steps: [
-          'Cortar tensión completamente antes de intervenir el cableado',
-          'Invertir dos de los tres cables de fase en la entrada del motor o en el contactor',
-          'No importa cuáles dos: cualquier intercambio de dos fases invierte la rotación',
-          'Verificar nuevamente el sentido de giro antes de acoplar la bomba',
-        ]
-      },
-      'sobrecarga-tri': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Sobrecarga en el motor',
-        urgency: { level: 'urgent', text: 'Parar y verificar mecánica' },
-        steps: [
-          'Verificar que el eje de la bomba gire libremente a mano (sin tensión)',
-          'Revisar el impulsor de la bomba: puede tener cuerpo extraño o desgaste',
-          'Verificar el sello mecánico: un sello trabado genera sobrecarga',
-          'Comparar amperaje actual con el de placa: si supera 20%, buscar causa mecánica',
-        ]
-      },
-      'desequilibrio-fases': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Desequilibrio de fases (>3%)',
-        urgency: { level: 'urgent', text: 'Parar y verificar alimentación' },
-        steps: [
-          'Medir tensión entre cada par de fases: L1-L2, L2-L3, L1-L3',
-          'Un desequilibrio >3% en tensión genera desequilibrio mucho mayor en corriente',
-          'Verificar conexiones en el tablero: bornes flojos generan resistencia y caída diferencial',
-          'Si el desequilibrio está en la red: reportar a la distribuidora eléctrica',
-        ]
-      },
-      'ok-tri': {
-        severity: 'ok',
-        badge: 'SISTEMA OK',
-        title: 'Bomba trifásica funcionando normalmente',
-        urgency: { level: 'ok', text: 'Sin acción urgente requerida' },
-        steps: [
-          'El diagnóstico eléctrico no detectó fallas',
-          'Si el problema es hidráulico (poca presión, no entrega agua), usar el módulo correspondiente',
-          'Registrar los valores de amperaje como referencia para mantenimiento preventivo',
-        ]
-      },
-    }
-  },
-
-  // ── EV NO ABRE ────────────────────────────────
-  'ev-no-abre': {
-    name: 'Electroválvula No Abre',
-    color: '#22c55e',
-    steps: [
-      {
-        id: 'tension-ev-abre',
-        tag: 'ELECTROVÁLVULA · NO ABRE',
-        question: '¿Hay tensión en los bornes de la electroválvula cuando debe abrir?',
-        hint: 'Con el programador activando la zona: medí entre los dos cables de la EV. Normal: 24 V CA.',
-        options: [
-          { icon: '✅', text: 'Sí, 24 V CA presentes', next: 'solenoide-abre' },
-          { icon: '🔴', text: 'No hay tensión (0 V)', next: 'programador-abre' },
-        ]
-      },
-      {
-        id: 'programador-abre',
-        tag: 'ELECTROVÁLVULA · CONTROL',
-        question: '¿El programador activa la zona correctamente?',
-        hint: 'Verificá en el programador si la zona aparece como activa. Podés activarla en modo manual.',
-        options: [
-          { icon: '✅', text: 'Sí, la zona está activa en el programador', next: 'result', data: { result: 'cable-corte-abre', severity: 'warning', tools: ['Voltímetro', 'Destornillador'] } },
-          { icon: '🔴', text: 'No, el programador no activa la zona', next: 'result', data: { result: 'falla-programador-zona', severity: 'warning', tools: ['Voltímetro', 'Multímetro'] } },
-        ]
-      },
-      {
-        id: 'solenoide-abre',
-        tag: 'ELECTROVÁLVULA · SOLENOIDE',
-        question: '¿Cuál es la resistencia del solenoide?',
-        hint: 'Con el solenoide desconectado: medí resistencia entre sus dos cables. Rango normal: 20–100 Ω.',
-        options: [
-          { icon: '✅', text: '20–100 Ω (normal)', next: 'membrana-abre' },
-          { icon: '∞', text: 'Infinito / circuito abierto', next: 'result', data: { result: 'solenoide-quemado', severity: 'urgent', tools: ['Multímetro', 'Destornillador'] } },
-          { icon: '0️⃣', text: '0 Ω o muy bajo (cortocircuito)', next: 'result', data: { result: 'solenoide-cortocircuito', severity: 'urgent', tools: ['Multímetro', 'Destornillador'] } },
-        ]
-      },
-      {
-        id: 'membrana-abre',
-        tag: 'ELECTROVÁLVULA · MECÁNICA',
-        question: '¿Cuándo fue la última vez que se limpió la electroválvula?',
-        hint: 'Una membrana sucia o con depósitos calcáreos es la causa más frecuente de EV que no abre a pesar de tener señal y solenoide OK.',
-        options: [
-          { icon: '🔧', text: 'Nunca o hace más de 2 años', next: 'result', data: { result: 'membrana-sucia-abre', severity: 'warning', tools: ['Destornillador', 'Llave ajustable', 'Cepillo pequeño'] } },
-          { icon: '📅', text: 'Hace menos de 1 año', next: 'presion-abre' },
-        ]
-      },
-      {
-        id: 'presion-abre',
-        tag: 'ELECTROVÁLVULA · HIDRÁULICA',
-        question: '¿La presión en la línea es suficiente?',
-        hint: 'Las EVs de diafragma necesitan presión mínima para abrir (generalmente 0.7–1.0 bar / 10–15 PSI).',
-        options: [
-          { icon: '✅', text: 'Sí, hay buena presión en la línea', next: 'result', data: { result: 'ev-falla-mecanica', severity: 'warning', tools: ['Destornillador', 'Llave ajustable'] } },
-          { icon: '🔴', text: 'No, la presión está baja', next: 'result', data: { result: 'ev-no-abre-baja-presion', severity: 'warning', tools: ['Manómetro', 'Destornillador'] } },
-        ]
-      },
-    ],
-    results: {
-      'cable-corte-abre': {
-        severity: 'warning',
-        badge: 'FALLA DETECTADA',
-        title: 'Corte o falla en el cableado de campo',
-        urgency: { level: 'warning', text: 'Reparar para restablecer riego' },
-        steps: [
-          'Verificar continuidad del cable desde el programador hasta la EV',
-          'Buscar cortes en puntos críticos: cruces de camino, zonas con herramientas o animales',
-          'Verificar conexiones en cajas de empalme: oxidación o agua acumulada',
-          'Reparar con conectores waterproof o reemplazar el tramo dañado',
-        ]
-      },
-      'falla-programador-zona': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Falla en la zona del programador',
-        urgency: { level: 'warning', text: 'Verificar programador' },
-        steps: [
-          'Verificar que la zona esté habilitada en la programación',
-          'Intentar activar la zona en modo manual desde el programador',
-          'Si en manual tampoco hay tensión: puede ser un triac o salida del programador quemada',
-          'Probar conectar la EV a otra zona que funcione: si abre, el problema es el programador',
-        ]
-      },
-      'solenoide-quemado': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Solenoide quemado (circuito abierto)',
-        urgency: { level: 'urgent', text: 'Reemplazar solenoide' },
-        steps: [
-          'Cortar la alimentación eléctrica antes de manipular',
-          'Reemplazar el solenoide: se desenrosca de la válvula sin necesidad de cortar agua',
-          'Verificar que el nuevo solenoide sea compatible (24 V CA, mismo hilo de rosca)',
-          'Tras el reemplazo: medir resistencia del nuevo solenoide (debe estar en 20–100 Ω)',
-        ]
-      },
-      'solenoide-cortocircuito': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Solenoide en cortocircuito',
-        urgency: { level: 'urgent', text: 'Reemplazar solenoide de inmediato' },
-        steps: [
-          'Un solenoide en corto puede dañar la salida del programador',
-          'Desconectar de inmediato y reemplazar el solenoide',
-          'Verificar que el programador no haya sufrido daño: probar otra zona',
-          'Revisar si hay agua dentro del solenoide: es causa común de cortocircuito',
-        ]
-      },
-      'membrana-sucia-abre': {
-        severity: 'warning',
-        badge: 'MANTENIMIENTO',
-        title: 'Membrana sucia o con depósitos',
-        urgency: { level: 'warning', text: 'Limpiar y revisar' },
-        steps: [
-          'Cortar el agua antes de abrir la válvula',
-          'Desmontar la EV y extraer la membrana con cuidado',
-          'Limpiar el orificio piloto (pequeño agujero en la membrana): es el más propenso a taparse',
-          'Limpiar el cuerpo de la válvula con agua y cepillo suave',
-          'Revisar el estado de la membrana: si está rígida, rota o deformada, reemplazarla',
-        ]
-      },
-      'ev-falla-mecanica': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Falla mecánica interna de la EV',
-        urgency: { level: 'warning', text: 'Desmontar y revisar' },
-        steps: [
-          'Cortar el agua y desmontar la electroválvula completamente',
-          'Inspeccionar membrana, resorte y cuerpo de la válvula',
-          'Revisar si el resorte está deformado o roto',
-          'Si los componentes están en buen estado pero no abre: reemplazar la válvula completa',
-        ]
-      },
-      'ev-no-abre-baja-presion': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Baja presión impide apertura de EV',
-        urgency: { level: 'warning', text: 'Verificar sistema hidráulico' },
-        steps: [
-          'Las EVs de diafragma necesitan presión mínima de 0.7–1.0 bar para abrir',
-          'Verificar presión en la línea con manómetro',
-          'Si la presión es insuficiente: usar el módulo "Hay poca presión" para diagnóstico',
-          'Opción temporal: reemplazar la EV por una de acción directa que no requiere presión mínima',
-        ]
-      },
-    }
-  },
-
-  // ── EV NO CIERRA ──────────────────────────────
-  'ev-no-cierra': {
-    name: 'Electroválvula No Cierra',
-    color: '#f97316',
-    steps: [
-      {
-        id: 'tension-ev-cierra',
-        tag: 'ELECTROVÁLVULA · NO CIERRA',
-        question: '¿Hay tensión en los bornes de la EV cuando NO debería estar activa?',
-        hint: 'Con la zona apagada en el programador: medí tensión en los cables de la EV. Debe ser 0 V.',
-        options: [
-          { icon: '🔴', text: 'Sí, hay tensión (señal fantasma)', next: 'result', data: { result: 'senal-fantasma', severity: 'warning', tools: ['Voltímetro', 'Multímetro'] } },
-          { icon: '✅', text: 'No hay tensión (0 V correcto)', next: 'membrana-cierra' },
-        ]
-      },
-      {
-        id: 'membrana-cierra',
-        tag: 'ELECTROVÁLVULA · MECÁNICA',
-        question: '¿La electroválvula cierra parcialmente o queda completamente abierta?',
-        hint: 'Observá el caudal que sale cuando la zona debería estar cerrada.',
-        options: [
-          { icon: '💧', text: 'Gotea o flujo parcial', next: 'result', data: { result: 'membrana-deteriorada', severity: 'warning', tools: ['Destornillador', 'Llave ajustable'] } },
-          { icon: '🚿', text: 'Flujo completo como si estuviera abierta', next: 'tornillo-bypass' },
-        ]
-      },
-      {
-        id: 'tornillo-bypass',
-        tag: 'ELECTROVÁLVULA · MECÁNICA',
-        question: '¿El tornillo de apertura manual (bypass) está cerrado?',
-        hint: 'Muchas EVs tienen un tornillo o palanca de apertura manual. Si quedó abierto, la válvula no cierra aunque no haya señal.',
-        options: [
-          { icon: '🔧', text: 'Estaba abierto / no lo sabía', next: 'result', data: { result: 'bypass-abierto', severity: 'ok', tools: ['Destornillador'] } },
-          { icon: '✅', text: 'Sí, está correctamente cerrado', next: 'result', data: { result: 'ev-bloqueada-abierta', severity: 'warning', tools: ['Destornillador', 'Llave ajustable'] } },
-        ]
-      },
-    ],
-    results: {
-      'senal-fantasma': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Señal fantasma o fuga eléctrica',
-        urgency: { level: 'warning', text: 'Revisar programador y cableado' },
-        steps: [
-          'Medir tensión en la salida del programador con la zona desactivada',
-          'Una tensión residual puede indicar que el triac del programador está "pegado"',
-          'Verificar también que no haya cruce de cables en el cableado de campo',
-          'Si el programador tiene la salida dañada: reemplazar el programador o esa salida',
-        ]
-      },
-      'membrana-deteriorada': {
-        severity: 'warning',
-        badge: 'MANTENIMIENTO',
-        title: 'Membrana deteriorada o con partículas',
-        urgency: { level: 'warning', text: 'Limpiar o reemplazar membrana' },
-        steps: [
-          'Cortar el agua y desmontar la EV',
-          'Inspeccionar la membrana: buscar roturas, deformaciones o materias extrañas',
-          'Limpiar el asiento de la válvula y el orificio piloto',
-          'Si la membrana está dañada: reemplazarla (kit de reparación disponible para la mayoría de marcas)',
-          'Una partícula de arena entre la membrana y el asiento es causa muy frecuente de goteo',
-        ]
-      },
-      'bypass-abierto': {
-        severity: 'ok',
-        badge: 'CAUSA ENCONTRADA',
-        title: 'Tornillo de apertura manual abierto',
-        urgency: { level: 'ok', text: 'Fácil solución' },
-        steps: [
-          'Cerrar el tornillo de apertura manual girando en sentido horario',
-          'No apretar en exceso: solo hasta que el flujo se detenga',
-          'Verificar que la válvula cierre completamente',
-          'El tornillo de bypass sirve para irrigar manualmente ante fallas eléctricas: recordar cerrarlo siempre después de usarlo',
-        ]
-      },
-      'ev-bloqueada-abierta': {
-        severity: 'warning',
-        badge: 'FALLA DETECTADA',
-        title: 'EV bloqueada en posición abierta',
-        urgency: { level: 'warning', text: 'Desmontar y revisar' },
-        steps: [
-          'Cortar el agua y desmontar la válvula completamente',
-          'Inspeccionar el resorte: si está roto o deformado, la membrana no puede cerrarse',
-          'Revisar si hay cuerpos extraños (piedritas, raíces) que impidan el cierre',
-          'Si el cuerpo de la válvula tiene deformaciones o el asiento está dañado: reemplazar la EV completa',
-        ]
-      },
-    }
-  },
-
-  // ── POCA PRESIÓN ──────────────────────────────
-  'poca-presion': {
-    name: 'Poca Presión',
-    color: '#a78bfa',
-    steps: [
-      {
-        id: 'pp-es-general',
-        tag: 'POCA PRESIÓN',
-        question: '¿La baja presión afecta a todas las zonas o solo a alguna?',
-        hint: 'Probá activar diferentes zonas y observá si la presión baja en todas o solo en algunas.',
-        options: [
-          { icon: '🌐', text: 'Todas las zonas tienen poca presión', next: 'pp-bomba-arranca' },
-          { icon: '📍', text: 'Solo una zona o sector', next: 'result', data: { result: 'pp-zona-parcial', severity: 'warning', tools: ['Destornillador', 'Llave de paso', 'Manómetro'] } },
-        ]
-      },
-      {
-        id: 'pp-bomba-arranca',
-        tag: 'POCA PRESIÓN · BOMBA',
-        question: '¿La bomba arranca y gira normalmente?',
-        hint: 'Verificá que la bomba enciende cuando el sistema activa y que suena con normalidad (sin vibración excesiva o ruido inusual).',
-        options: [
-          { icon: '✅', text: 'Sí, arranca y suena normal', next: 'pp-valvula-descarga' },
-          { icon: '🔴', text: 'No arranca o tiene ruido inusual', next: 'result', data: { result: 'pp-problema-bomba', severity: 'urgent', tools: ['Voltímetro', 'Pinza amperimétrica'] } },
-        ]
-      },
-      {
-        id: 'pp-valvula-descarga',
-        tag: 'POCA PRESIÓN · HIDRÁULICA',
-        question: '¿Las válvulas de descarga y llaves de paso están completamente abiertas?',
-        hint: 'Verificá todas las llaves manuales en el circuito: desde la bomba hasta las zonas.',
-        options: [
-          { icon: '✅', text: 'Sí, todas abiertas', next: 'pp-filtro' },
-          { icon: '🔴', text: 'No, alguna estaba cerrada o a medio abrir', next: 'result', data: { result: 'pp-valvula-cerrada', severity: 'ok', tools: [] } },
-        ]
-      },
-      {
-        id: 'pp-filtro',
-        tag: 'POCA PRESIÓN · FILTRO',
-        question: '¿Cuándo fue la última vez que se limpió el filtro de la instalación?',
-        hint: 'Un filtro sucio es una de las causas más frecuentes de pérdida de presión general.',
-        options: [
-          { icon: '🔧', text: 'Nunca o hace más de 1 año', next: 'result', data: { result: 'pp-filtro-sucio', severity: 'warning', tools: ['Destornillador', 'Llave ajustable'] } },
-          { icon: '📅', text: 'Hace menos de 6 meses', next: 'pp-impulsor' },
-        ]
-      },
-      {
-        id: 'pp-impulsor',
-        tag: 'POCA PRESIÓN · BOMBA',
-        question: '¿La bomba consume más amperaje del nominal o el eje gira con dificultad?',
-        hint: 'Un impulsor desgastado o con incrustaciones genera poca presión aunque el motor funcione bien.',
-        options: [
-          { icon: '📈', text: 'Sí, alto amperaje o dificultad de giro', next: 'result', data: { result: 'pp-impulsor-desgastado', severity: 'warning', tools: ['Pinza amperimétrica', 'Llave ajustable'] } },
-          { icon: '✅', text: 'No, amperaje y giro normales', next: 'result', data: { result: 'pp-sello-o-aspiracion', severity: 'warning', tools: ['Manómetro', 'Destornillador'] } },
-        ]
-      },
-    ],
-    results: {
-      'pp-zona-parcial': {
-        severity: 'warning',
-        badge: 'FALLA LOCALIZADA',
-        title: 'Baja presión en zona parcial',
-        urgency: { level: 'warning', text: 'Revisar sector afectado' },
-        steps: [
-          'Verificar la electroválvula de esa zona: puede no estar abriendo completamente',
-          'Inspeccionar tuberías en ese sector: buscar aplastamientos, raíces o daños',
-          'Verificar que los aspersores/goteros de esa zona no estén obstruidos',
-          'Revisar si hay más emisores de los diseñados para esa zona (exceso de demanda)',
-        ]
-      },
-      'pp-problema-bomba': {
-        severity: 'urgent',
-        badge: 'FALLA EN BOMBA',
-        title: 'Problema en la bomba',
-        urgency: { level: 'urgent', text: 'Revisar bomba antes de operar' },
-        steps: [
-          'Usar el módulo "Bomba no arranca" para diagnóstico completo',
-          'No operar el sistema hasta resolver el problema de la bomba',
-        ]
-      },
-      'pp-valvula-cerrada': {
-        severity: 'ok',
-        badge: 'CAUSA ENCONTRADA',
-        title: 'Válvula o llave de paso cerrada',
-        urgency: { level: 'ok', text: 'Fácil solución' },
-        steps: [
-          'Abrir completamente la válvula o llave de paso que estaba cerrada',
-          'Verificar que no queden otras llaves parcialmente cerradas',
-          'Probar el sistema y verificar que la presión vuelva a la normalidad',
-        ]
-      },
-      'pp-filtro-sucio': {
-        severity: 'warning',
-        badge: 'MANTENIMIENTO',
-        title: 'Filtro sucio o colmatado',
-        urgency: { level: 'warning', text: 'Limpiar o reemplazar filtro' },
-        steps: [
-          'Cortar el agua y liberar presión antes de abrir el filtro',
-          'Extraer el cartucho o malla filtrante y lavar con agua a presión',
-          'Si el filtro está muy deteriorado o roto: reemplazar',
-          'Programar limpieza periódica cada 3–6 meses según calidad del agua',
-        ]
-      },
-      'pp-impulsor-desgastado': {
-        severity: 'warning',
-        badge: 'DESGASTE MECÁNICO',
-        title: 'Impulsor desgastado o con incrustaciones',
-        urgency: { level: 'warning', text: 'Revisar y/o reemplazar impulsor' },
-        steps: [
-          'Desmontar la bomba y extraer el impulsor',
-          'Inspeccionar visualmente: desgaste de paletas, incrustaciones calcáreas o cuerpos extraños',
-          'Limpiar incrustaciones con solución de ácido cítrico diluido',
-          'Si hay desgaste físico del impulsor: reemplazar por uno del mismo modelo',
-        ]
-      },
-      'pp-sello-o-aspiracion': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Posible entrada de aire o falla de sello',
-        urgency: { level: 'warning', text: 'Verificar lado de aspiración' },
-        steps: [
-          'Verificar que la línea de aspiración (entrada de la bomba) esté completamente cargada de agua',
-          'Buscar entrada de aire: uniones roscadas, manguitos o válvula de retención dañada',
-          'Verificar el sello mecánico de la bomba: goteo por el eje indica desgaste',
-          'En bombas de superficie: verificar que el cebado no se pierda (válvula de pie en buen estado)',
-        ]
-      },
-    }
-  },
-
-  // ── BOMBA NO ENTREGA AGUA ─────────────────────
-  'bomba-no-agua': {
-    name: 'Bomba No Entrega Agua',
-    color: '#06b6d4',
-    steps: [
-      {
-        id: 'bna-motor-gira',
-        tag: 'BOMBA NO ENTREGA AGUA',
-        question: '¿El motor de la bomba gira con normalidad?',
-        hint: 'Verificá que la bomba enciende y suena como habitualmente. Un motor que gira pero no bombea indica problema hidráulico.',
-        options: [
-          { icon: '✅', text: 'Sí, gira normalmente', next: 'bna-cebado' },
-          { icon: '🔴', text: 'No gira o tiene problemas eléctricos', next: 'result', data: { result: 'bna-problema-motor', severity: 'urgent', tools: ['Voltímetro'] } },
-        ]
-      },
-      {
-        id: 'bna-cebado',
-        tag: 'BOMBA NO ENTREGA AGUA · ASPIRACIÓN',
-        question: '¿La bomba está correctamente cebada (llena de agua)?',
-        hint: 'Las bombas de superficie no funcionan si no tienen agua en la carcasa. Verificá el tapón de cebado.',
-        options: [
-          { icon: '✅', text: 'Sí, está cebada / es bomba sumergible', next: 'bna-valvula-pie' },
-          { icon: '🔴', text: 'No está cebada o se desceba', next: 'result', data: { result: 'bna-perdida-cebado', severity: 'urgent', tools: ['Llave ajustable', 'Balde de agua'] } },
-        ]
-      },
-      {
-        id: 'bna-valvula-pie',
-        tag: 'BOMBA NO ENTREGA AGUA · ASPIRACIÓN',
-        question: '¿La válvula de pie (retención en aspiración) está en buen estado?',
-        hint: 'La válvula de pie evita que el agua retroceda. Si está rota, la bomba no puede aspirar.',
-        options: [
-          { icon: '✅', text: 'Sí, retiene el agua correctamente', next: 'bna-nivel-agua' },
-          { icon: '🔴', text: 'No retiene / sospechosa de falla', next: 'result', data: { result: 'bna-valvula-pie', severity: 'urgent', tools: ['Llave ajustable', 'Válvula de repuesto'] } },
-        ]
-      },
-      {
-        id: 'bna-nivel-agua',
-        tag: 'BOMBA NO ENTREGA AGUA · FUENTE',
-        question: '¿El nivel del agua en la fuente (aljibe, cisterna, pozo) es suficiente?',
-        hint: 'Si el nivel bajó demasiado, la bomba aspira aire en lugar de agua.',
-        options: [
-          { icon: '✅', text: 'Sí, nivel adecuado', next: 'result', data: { result: 'bna-impulsor-obstruido', severity: 'warning', tools: ['Llave ajustable', 'Destornillador'] } },
-          { icon: '🔴', text: 'No, nivel bajo o depósito vacío', next: 'result', data: { result: 'bna-nivel-bajo', severity: 'urgent', tools: [] } },
-        ]
-      },
-    ],
-    results: {
-      'bna-problema-motor': {
-        severity: 'urgent',
-        badge: 'FALLA EN MOTOR',
-        title: 'Problema en el motor de la bomba',
-        urgency: { level: 'urgent', text: 'Diagnosticar motor primero' },
-        steps: [
-          'Usar el módulo "Bomba monofásica no arranca" o "Bomba trifásica no arranca" según corresponda',
-        ]
-      },
-      'bna-perdida-cebado': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Pérdida de cebado',
-        urgency: { level: 'urgent', text: 'Cebarla y verificar causa de descebado' },
-        steps: [
-          'Abrir el tapón de cebado y cargar agua hasta que salga por el agujero',
-          'Cerrar el tapón y arrancar la bomba inmediatamente',
-          'Si se desceba repetidamente: buscar entrada de aire en la línea de aspiración',
-          'Verificar especialmente uniones roscadas, abrazaderas y la válvula de pie',
-        ]
-      },
-      'bna-valvula-pie': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Válvula de pie con falla',
-        urgency: { level: 'urgent', text: 'Reemplazar válvula de pie' },
-        steps: [
-          'Extraer la línea de aspiración del depósito o pozo',
-          'Inspeccionar la válvula de pie: buscar detritos, cuerpos extraños o deterioro del asiento',
-          'Limpiar o reemplazar la válvula de pie',
-          'Reensamblar y verificar que retenga el agua correctamente antes de arrancar',
-        ]
-      },
-      'bna-nivel-bajo': {
-        severity: 'urgent',
-        badge: 'SIN AGUA EN FUENTE',
-        title: 'Nivel de agua insuficiente en la fuente',
-        urgency: { level: 'urgent', text: 'No operar hasta tener agua suficiente' },
-        steps: [
-          'No operar la bomba en seco: puede dañar el sello mecánico en minutos',
-          'Rellenar el depósito o cisterna antes de poner en marcha',
-          'Si es un pozo: esperar a que recupere el nivel',
-          'Considerar instalar un sensor de nivel mínimo para protección automática',
-        ]
-      },
-      'bna-impulsor-obstruido': {
-        severity: 'warning',
-        badge: 'FALLA MECÁNICA',
-        title: 'Impulsor obstruido o desgastado',
-        urgency: { level: 'warning', text: 'Desmontar y revisar bomba' },
-        steps: [
-          'Cortar tensión y agua antes de desmontar',
-          'Abrir la carcasa de la bomba y extraer el impulsor',
-          'Buscar cuerpos extraños (arena, piedritas, hojas) que bloqueen el impulsor',
-          'Si el impulsor está desgastado: reemplazar por uno del mismo modelo',
-          'Limpiar la carcasa antes de rearmar',
-        ]
-      },
-    }
-  },
-
-  // ── ASPERSOR / GOTERO ─────────────────────────
-  'aspersor': {
-    name: 'Aspersor / Gotero',
-    color: '#eab308',
-    steps: [
-      {
-        id: 'asp-tipo',
-        tag: 'ASPERSOR / GOTERO',
-        question: '¿Cuál es el problema que observás?',
-        options: [
-          { icon: '💦', text: 'No gira / no emerge / no distribuye bien', next: 'asp-presion' },
-          { icon: '🚿', text: 'Pierde agua cuando el sistema está apagado', next: 'result', data: { result: 'asp-goteo-apagado', severity: 'warning', tools: ['Destornillador'] } },
-          { icon: '🔴', text: 'Está roto o dañado físicamente', next: 'result', data: { result: 'asp-roto', severity: 'warning', tools: ['Aspersor/gotero de repuesto', 'Destornillador'] } },
-          { icon: '🟡', text: 'Salida desigual o chorro irregular', next: 'asp-obstruccion' },
-        ]
-      },
-      {
-        id: 'asp-presion',
-        tag: 'ASPERSOR / GOTERO · PRESIÓN',
-        question: '¿La presión en esa zona parece normal?',
-        hint: 'Comparar con otras zonas. Si hay poca presión en toda esa zona, el problema puede no ser el emisor.',
-        options: [
-          { icon: '✅', text: 'Sí, presión normal en la zona', next: 'asp-obstruccion' },
-          { icon: '🔴', text: 'No, toda la zona tiene poca presión', next: 'result', data: { result: 'asp-baja-presion-zona', severity: 'warning', tools: ['Manómetro'] } },
-        ]
-      },
-      {
-        id: 'asp-obstruccion',
-        tag: 'ASPERSOR / GOTERO · OBSTRUCCIÓN',
-        question: '¿El emisor tiene sedimentos, raíces o depósitos visibles?',
-        hint: 'Retirá el aspersor o gotero y revisá visualmente si está obstruido.',
-        options: [
-          { icon: '🔴', text: 'Sí, tiene suciedad o está obstruido', next: 'result', data: { result: 'asp-obstruido', severity: 'warning', tools: ['Agua a presión', 'Destornillador pequeño'] } },
-          { icon: '✅', text: 'No, está limpio', next: 'result', data: { result: 'asp-desajuste', severity: 'warning', tools: ['Destornillador', 'Aspersor de repuesto'] } },
-        ]
-      },
-    ],
-    results: {
-      'asp-goteo-apagado': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Aspersor/gotero pierde agua de noche',
-        urgency: { level: 'warning', text: 'Instalar válvula antidrenaje' },
-        steps: [
-          'El goteo nocturno es normal en zonas bajas: el agua drena por gravedad',
-          'Solución: instalar aspersores con válvula antidrenaje incorporada',
-          'También verificar que la electroválvula de esa zona cierre completamente',
-          'Si solo un aspersor gotea: puede tener la válvula antidrenaje dañada',
-        ]
-      },
-      'asp-roto': {
-        severity: 'warning',
-        badge: 'REEMPLAZO',
-        title: 'Emisor dañado físicamente',
-        urgency: { level: 'warning', text: 'Reemplazar emisor' },
-        steps: [
-          'Identificar el modelo exacto (marca, caudal en l/h para goteros, radio para aspersores)',
-          'Cortar el agua y reemplazar el emisor dañado',
-          'Verificar que el nuevo emisor tenga las mismas características',
-          'Mezclar emisores de diferentes caudales en la misma zona afecta la uniformidad del riego',
-        ]
-      },
-      'asp-baja-presion-zona': {
-        severity: 'warning',
-        badge: 'PROBLEMA DE PRESIÓN',
-        title: 'Baja presión en la zona',
-        urgency: { level: 'warning', text: 'Diagnosticar sistema hidráulico' },
-        steps: [
-          'Usar el módulo "Hay poca presión" para diagnóstico completo',
-          'Verificar si hay más emisores de los diseñados para esa zona',
-        ]
-      },
-      'asp-obstruido': {
-        severity: 'warning',
-        badge: 'MANTENIMIENTO',
-        title: 'Emisor obstruido',
-        urgency: { level: 'warning', text: 'Limpiar o reemplazar' },
-        steps: [
-          'Desmontar el emisor y limpiar con agua a presión',
-          'Para goteros: usar un palillo fino o aguja para desobstruir el orificio',
-          'Si el agua es calcárea: remojar en solución de ácido cítrico 10% por 30 minutos',
-          'Instalar filtro en la zona si los obstrucciones son recurrentes',
-        ]
-      },
-      'asp-desajuste': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Desajuste mecánico o tipo incorrecto',
-        urgency: { level: 'warning', text: 'Revisar configuración' },
-        steps: [
-          'En aspersores emergentes: verificar que el cuerpo suba completamente (puede estar atascado)',
-          'Verificar el ajuste de arco y radio del aspersor',
-          'Confirmar que el caudal del emisor es correcto para esa zona',
-          'Si el emisor tiene años de uso: puede estar desgastado internamente, reemplazar',
-        ]
-      },
-    }
-  },
-
-  // ── PROGRAMADOR FALLA ─────────────────────────
-  'programador': {
-    name: 'El Programador Falla',
-    color: '#ec4899',
-    steps: [
-      {
-        id: 'prog-tipo-falla',
-        tag: 'PROGRAMADOR',
-        question: '¿Cuál es el síntoma principal?',
-        options: [
-          { icon: '🚫', text: 'No enciende / pantalla en negro', next: 'prog-alimentacion' },
-          { icon: '⏰', text: 'No activa las zonas a la hora programada', next: 'prog-hora' },
-          { icon: '🔁', text: 'Activa zonas en momentos incorrectos', next: 'result', data: { result: 'prog-programa-mal', severity: 'warning', tools: [] } },
-          { icon: '⚡', text: 'Una zona no responde al programador', next: 'result', data: { result: 'prog-zona-no-responde', severity: 'warning', tools: ['Voltímetro', 'Multímetro'] } },
-        ]
-      },
-      {
-        id: 'prog-alimentacion',
-        tag: 'PROGRAMADOR · ALIMENTACIÓN',
-        question: '¿El transformador o fuente del programador tiene tensión de salida?',
-        hint: 'La mayoría de programadores usan un transformador 220V → 24V CA. Medí la salida del transformador.',
-        options: [
-          { icon: '✅', text: 'Sí, 24 V CA en la salida', next: 'result', data: { result: 'prog-falla-interna', severity: 'urgent', tools: ['Voltímetro', 'Destornillador'] } },
-          { icon: '🔴', text: 'No hay tensión en la salida', next: 'result', data: { result: 'prog-transformador', severity: 'urgent', tools: ['Voltímetro', 'Transformador de repuesto'] } },
-        ]
-      },
-      {
-        id: 'prog-hora',
-        tag: 'PROGRAMADOR · CONFIGURACIÓN',
-        question: '¿El reloj del programador muestra la hora correcta?',
-        hint: 'Un corte de luz puede resetear el reloj. Sin hora correcta, el programador no activa en el momento indicado.',
-        options: [
-          { icon: '🔴', text: 'No, la hora está incorrecta o reseteada', next: 'result', data: { result: 'prog-reloj-resetado', severity: 'warning', tools: [] } },
-          { icon: '✅', text: 'Sí, la hora está correcta', next: 'result', data: { result: 'prog-programa-perdido', severity: 'warning', tools: [] } },
-        ]
-      },
-    ],
-    results: {
-      'prog-falla-interna': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Falla interna del programador',
-        urgency: { level: 'urgent', text: 'Reemplazar programador' },
-        steps: [
-          'El transformador entrega tensión pero el programador no responde: falla interna',
-          'Los programadores no tienen reparación económica en campo',
-          'Documentar la cantidad de zonas, marca y modelo antes de comprar el reemplazo',
-          'Al instalar el nuevo: verificar compatibilidad con los solenoides existentes (24 V CA)',
-        ]
-      },
-      'prog-transformador': {
-        severity: 'urgent',
-        badge: 'FALLA DETECTADA',
-        title: 'Transformador del programador sin salida',
-        urgency: { level: 'urgent', text: 'Reemplazar transformador o programador' },
-        steps: [
-          'Verificar que hay tensión en la entrada (220 V CA en el enchufe o bornera)',
-          'Si la entrada es correcta pero no hay salida: transformador quemado',
-          'Verificar si el transformador es externo (reemplazable) o interno (reemplazar programador)',
-          'Un cortocircuito en el cableado de campo puede quemar el transformador',
-        ]
-      },
-      'prog-reloj-resetado': {
-        severity: 'warning',
-        badge: 'CONFIGURACIÓN',
-        title: 'Reloj reseteado por corte de luz',
-        urgency: { level: 'warning', text: 'Reconfigurar programador' },
-        steps: [
-          'Ajustar la hora y día actuales en el programador',
-          'Verificar que los programas de riego sigan almacenados (puede haberlos perdido)',
-          'Si el programador pierde la hora frecuentemente: verificar si tiene batería de respaldo',
-          'Reemplazar la batería del programador si existe (generalmente pila tipo moneda CR2032)',
-        ]
-      },
-      'prog-programa-perdido': {
-        severity: 'warning',
-        badge: 'CONFIGURACIÓN',
-        title: 'Programa de riego perdido o mal configurado',
-        urgency: { level: 'warning', text: 'Reconfigurar programación' },
-        steps: [
-          'Verificar cada programa: días activos, hora de inicio, duración por zona',
-          'Algunos programadores tienen el modo "rain off" o "skip" activado accidentalmente',
-          'Verificar que el programador no esté en modo OFF o suspensión temporal',
-          'Documentar la programación para evitar perderla ante futuros cortes de luz',
-        ]
-      },
-      'prog-programa-mal': {
-        severity: 'warning',
-        badge: 'CONFIGURACIÓN',
-        title: 'Programación incorrecta',
-        urgency: { level: 'warning', text: 'Revisar programación' },
-        steps: [
-          'Revisar todos los programas activos: puede haber un programa duplicado o mal configurado',
-          'Verificar si hay programas solapados que activan zonas en momentos incorrectos',
-          'En programadores con múltiples programas (A, B, C): desactivar los que no se usan',
-          'Resetear el programador a valores de fábrica si la configuración está muy confusa',
-        ]
-      },
-      'prog-zona-no-responde': {
-        severity: 'warning',
-        badge: 'FALLA EN ZONA',
-        title: 'Una zona no responde al programador',
-        urgency: { level: 'warning', text: 'Verificar salida y cableado' },
-        steps: [
-          'Probar la zona en modo manual desde el programador',
-          'Medir tensión en la salida del terminal de esa zona: debe tener 24 V CA en manual',
-          'Si no hay tensión: salida del programador dañada (triac quemado)',
-          'Si hay tensión pero la EV no abre: diagnóstico en módulo "Electroválvula no abre"',
-        ]
-      },
-    }
-  },
-
-  // ── FUGA DE AGUA ──────────────────────────────
-  'fuga': {
-    name: 'Pérdida de Agua',
-    color: '#14b8a6',
-    steps: [
-      {
-        id: 'fuga-cuando',
-        tag: 'PÉRDIDA DE AGUA',
-        question: '¿Cuándo ocurre la pérdida?',
-        options: [
-          { icon: '💧', text: 'Siempre, incluso con el sistema apagado', next: 'fuga-llave-cierre' },
-          { icon: '🔁', text: 'Solo cuando el sistema está en funcionamiento', next: 'fuga-ubicacion' },
-          { icon: '🌙', text: 'Solo de noche (cuando todo está apagado)', next: 'result', data: { result: 'fuga-drenaje-gravedad', severity: 'info', tools: ['Destornillador'] } },
-        ]
-      },
-      {
-        id: 'fuga-llave-cierre',
-        tag: 'PÉRDIDA DE AGUA · ORIGEN',
-        question: '¿Al cerrar la llave general se detiene la pérdida?',
-        hint: 'Cerrá la llave de paso principal y observá si el goteo o flujo se detiene.',
-        options: [
-          { icon: '✅', text: 'Sí, se detiene al cerrar', next: 'result', data: { result: 'fuga-ev-no-cierra', severity: 'warning', tools: ['Voltímetro', 'Destornillador', 'Llave ajustable'] } },
-          { icon: '🔴', text: 'No, sigue aunque esté cerrada', next: 'result', data: { result: 'fuga-estructura', severity: 'urgent', tools: ['Detector de humedad', 'Pala'] } },
-        ]
-      },
-      {
-        id: 'fuga-ubicacion',
-        tag: 'PÉRDIDA DE AGUA · LOCALIZACIÓN',
-        question: '¿Podés identificar la zona o ubicación de la pérdida?',
-        options: [
-          { icon: '📍', text: 'Sí, veo el lugar donde escapa', next: 'fuga-tipo-visible' },
-          { icon: '❓', text: 'No, no se ve pero hay consumo excesivo', next: 'result', data: { result: 'fuga-oculta', severity: 'warning', tools: ['Manómetro', 'Pala o detector de humedad'] } },
-        ]
-      },
-      {
-        id: 'fuga-tipo-visible',
-        tag: 'PÉRDIDA DE AGUA · TIPO',
-        question: '¿Dónde está la fuga visible?',
-        options: [
-          { icon: '🔗', text: 'En una unión, codo o tee', next: 'result', data: { result: 'fuga-union', severity: 'warning', tools: ['Llave ajustable', 'Teflón', 'Pegamento PVC'] } },
-          { icon: '📏', text: 'En un tramo recto de caño', next: 'result', data: { result: 'fuga-caño', severity: 'urgent', tools: ['Llave ajustable', 'Pegamento PVC', 'Tramo de caño de repuesto'] } },
-          { icon: '🚰', text: 'En una válvula o electroválvula', next: 'result', data: { result: 'fuga-valvula', severity: 'warning', tools: ['Llave ajustable', 'Kit de reparación EV', 'Teflón'] } },
-          { icon: '💉', text: 'En un gotero o conector de gotero', next: 'result', data: { result: 'fuga-gotero-conector', severity: 'warning', tools: ['Tapón de gotero', 'Punzón', 'Gotero de repuesto'] } },
-        ]
-      },
-    ],
-    results: {
-      'fuga-drenaje-gravedad': {
-        severity: 'info',
-        badge: 'NORMAL EN ZONAS BAJAS',
-        title: 'Drenaje por gravedad nocturno',
-        urgency: { level: 'ok', text: 'Solución simple disponible' },
-        steps: [
-          'Es un comportamiento normal: el agua de las tuberías drena por la parte más baja',
-          'Solución: instalar aspersores/goteros con válvula antidrenaje incorporada',
-          'También verificar que las electroválvulas cierren completamente (usar módulo EV no cierra)',
-          'Si el volumen es grande: puede indicar falla en EV o en línea de drenaje',
-        ]
-      },
-      'fuga-ev-no-cierra': {
-        severity: 'warning',
-        badge: 'ATENCIÓN',
-        title: 'Electroválvula que no cierra completamente',
-        urgency: { level: 'warning', text: 'Revisar electroválvulas' },
-        steps: [
-          'Activar cada zona por separado para identificar cuál EV no cierra',
-          'Una vez identificada: usar el módulo "Electroválvula no cierra" para diagnóstico',
-          'Verificar también el tornillo de apertura manual de cada EV',
-        ]
-      },
-      'fuga-estructura': {
-        severity: 'urgent',
-        badge: 'FUGA ESTRUCTURAL',
-        title: 'Fuga en la red de agua (antes del sistema)',
-        urgency: { level: 'urgent', text: 'Llamar a plomero de inmediato' },
-        steps: [
-          'La fuga es en la red general, antes del punto de control del sistema de riego',
-          'Cerrar la llave general del inmueble',
-          'Llamar a un plomero o a la empresa de agua según la ubicación de la fuga',
-          'No reabrir hasta localizar y reparar la rotura',
-        ]
-      },
-      'fuga-oculta': {
-        severity: 'warning',
-        badge: 'FUGA NO VISIBLE',
-        title: 'Fuga subterránea o no visible',
-        urgency: { level: 'warning', text: 'Localizar antes de reparar' },
-        steps: [
-          'Cerrar el sistema y registrar la presión: si baja sola, confirma fuga activa',
-          'Activar zonas de a una y escuchar: el ruido o la presión diferencial puede delatar la zona',
-          'Buscar zonas del jardín con exceso de humedad o barro inusual',
-          'Considerar un detector de humedad o sonda para localizar sin excavar',
-        ]
-      },
-      'fuga-union': {
-        severity: 'warning',
-        badge: 'FUGA EN UNIÓN',
-        title: 'Pérdida en unión, codo o tee',
-        urgency: { level: 'warning', text: 'Reparar en próxima oportunidad' },
-        steps: [
-          'Cortar el agua y dejar secar la zona antes de reparar',
-          'En uniones roscadas: envolver con teflón y reapretar (no exceder el torque)',
-          'En uniones soldadas o pegadas con PVC: cortar y rehacer la unión con pegamento fresco',
-          'Verificar que no haya movimiento de tierra que genere tensión en esa unión',
-        ]
-      },
-      'fuga-caño': {
-        severity: 'urgent',
-        badge: 'ROTURA DE CAÑO',
-        title: 'Rotura en tramo de tubería',
-        urgency: { level: 'urgent', text: 'Reparar antes del próximo riego' },
-        steps: [
-          'Cortar el agua y marcar la zona de la rotura',
-          'Cortar el tramo dañado con sierra o cortatubos',
-          'Reemplazar con un tramo nuevo usando dos uniones o un manguito de reparación',
-          'Dejar secar el pegamento PVC al menos 30 minutos antes de presurizar',
-        ]
-      },
-      'fuga-valvula': {
-        severity: 'warning',
-        badge: 'FUGA EN VÁLVULA',
-        title: 'Pérdida en válvula o EV',
-        urgency: { level: 'warning', text: 'Revisar sellado y O-rings' },
-        steps: [
-          'Cortar agua y desmontar la válvula',
-          'Inspeccionar O-rings y juntas: si están duros o partidos, reemplazar',
-          'En conexiones roscadas: verificar teflón y reapretar',
-          'Si la pérdida es por el cuerpo de la válvula (rotura): reemplazar la válvula completa',
-        ]
-      },
-      'fuga-gotero-conector': {
-        severity: 'warning',
-        badge: 'FUGA EN EMISOR',
-        title: 'Pérdida en gotero o conector',
-        urgency: { level: 'warning', text: 'Fácil de reparar' },
-        steps: [
-          'Si el gotero salió del conector: reinsertar con presión firme',
-          'Si el conector está roto o la perforación agrandada: colocar un tapón y reubicar',
-          'Los conectores de gotero en manguera de 16mm se tapan con un tapón del mismo diámetro',
-          'Usar punzón adecuado para hacer nueva perforación en un lugar limpio de la manguera',
-        ]
-      },
-    }
-  },
-
-};
-
-// ═══════════════════════════════════════════════
-// ESTADO DE LA APP
-// ═══════════════════════════════════════════════
-let state = {
-  moduleId: null,
-  stepIndex: 0,
-  path: [],        // [{question, answer}]
-  stepHistory: [], // stack of stepIds for back navigation
-  currentStepId: null,
-  resultData: null,
-  moduleName: '',
-};
-
-// ═══════════════════════════════════════════════
-// NAVEGACIÓN
-// ═══════════════════════════════════════════════
-function startModule(id) {
-  state.moduleId = id;
-  state.stepIndex = 0;
-  state.path = [];
-  state.stepHistory = [];
-  state.resultData = null;
-  state.moduleName = MODULES[id].name;
-  const firstStep = MODULES[id].steps[0];
-  state.currentStepId = firstStep.id;
-  showDiagScreen();
-  renderStep(firstStep.id);
-}
-
-function showDiagScreen() {
-  document.getElementById('screen-home').style.display = 'none';
-  document.getElementById('screen-diag').classList.add('active');
-  document.getElementById('btn-back').classList.add('visible');
-  document.getElementById('breadcrumb').classList.add('visible');
-  document.getElementById('progress-bar').classList.add('visible');
-}
-
-function goHome() {
-  document.getElementById('screen-home').style.display = 'block';
-  document.getElementById('screen-diag').classList.remove('active');
-  document.getElementById('btn-back').classList.remove('visible');
-  document.getElementById('breadcrumb').classList.remove('visible');
-  document.getElementById('progress-bar').classList.remove('visible');
-  document.getElementById('screen-diag').innerHTML = '';
-  document.getElementById('bottom-actions') && document.getElementById('bottom-actions').remove();
-  state = { moduleId: null, stepIndex: 0, path: [], stepHistory: [], resultData: null, moduleName: '' };
-}
-
-function goBack() {
-  if (state.stepHistory.length === 0) { goHome(); return; }
-  const prevId = state.stepHistory.pop();
-  state.path.pop();
-  state.currentStepId = prevId;
-  renderStep(prevId);
-}
-
-// ═══════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════
-function renderStep(stepId) {
-  const mod = MODULES[state.moduleId];
-  const step = mod.steps.find(s => s.id === stepId);
-  if (!step) return;
-
-  updateBreadcrumb(step.id);
-  updateProgress();
-
-  let html = '';
-
-  // Camino recorrido
-  if (state.path.length > 0) {
-    html += `<div class="path-card">
-      <div class="path-card-title">Camino recorrido</div>`;
-    state.path.forEach(p => {
-      const q = p.question.length > 50 ? p.question.substring(0, 50) + '…' : p.question;
-      html += `<div class="path-item">
-        <span class="path-question">${q}</span>
-        <span class="path-sep">→</span>
-        <span class="path-answer">${p.answer}</span>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // Tarjeta de pregunta
-  html += `<div class="question-card">
-    <div class="question-module-tag">${step.tag}</div>
-    <div class="question-text">${step.question}</div>`;
-  if (step.hint) {
-    html += `<div class="question-hint">${step.hint}</div>`;
-  }
-  if (step.tip) {
-    html += `<div class="question-tip">${step.tip}</div>`;
-  }
-  html += `</div>`;
-
-  // Opciones
-  step.options.forEach((opt, i) => {
-    html += `<button class="option-btn" onclick="chooseOption(${i})">
-      <span class="opt-icon">${opt.icon}</span>
-      <span class="opt-text">${opt.text}</span>
-    </button>`;
-  });
-
-  document.getElementById('screen-diag').innerHTML = html;
-  document.getElementById('screen-diag').scrollTop = 0;
-  window.scrollTo(0, 0);
-  hideBottomActions();
-}
-
-function chooseOption(i) {
-  const mod = MODULES[state.moduleId];
-  const step = mod.steps.find(s => s.id === state.currentStepId);
-  const opt = step.options[i];
-
-  state.path.push({ question: step.question, answer: opt.text });
-  state.stepHistory.push(state.currentStepId);
-
-  if (opt.next === 'result') {
-    state.resultData = opt.data;
-    renderResult(opt.data);
-  } else {
-    state.currentStepId = opt.next;
-    renderStep(opt.next);
-  }
-}
-
-function renderResult(data) {
-  const mod = MODULES[state.moduleId];
-  const result = mod.results[data.result];
-  if (!result) return;
-
-  updateBreadcrumb('Resultado');
-  updateProgress(true);
-
-  const sev = result.severity;
-  const urgencyEmoji = sev === 'urgent' ? '🔴' : sev === 'warning' ? '🟡' : sev === 'ok' ? '🟢' : '🔵';
-
-  let html = '';
-
-  // Camino recorrido
-  html += `<div class="path-card">
-    <div class="path-card-title">Diagnóstico recorrido</div>`;
-  state.path.forEach(p => {
-    const q = p.question.length > 52 ? p.question.substring(0, 52) + '…' : p.question;
-    html += `<div class="path-item">
-      <span class="path-question">${q}</span>
-      <span class="path-sep">→</span>
-      <span class="path-answer">${p.answer}</span>
-    </div>`;
-  });
-  html += `</div>`;
-
-  // Tarjeta resultado
-  html += `<div class="result-card ${sev}">
-    <div class="result-badge ${sev}">${urgencyEmoji} ${result.badge}</div>
-    <div class="result-title">${result.title}</div>
-    <div class="urgency-line ${sev}">${urgencyEmoji} ${result.urgency.text}</div>
-    <ul class="steps-list">`;
-  result.steps.forEach((s, i) => {
-    html += `<li class="step-item">
-      <span class="step-num">${i + 1}</span>
-      <span class="step-text">${s}</span>
-    </li>`;
-  });
-  html += `</ul></div>`;
-
-  // Herramientas
-  if (data.tools && data.tools.length > 0) {
-    html += `<div class="tools-card">
-      <div class="tools-title">🔧 Herramientas para esta tarea</div>
-      <div class="tools-list">`;
-    data.tools.forEach(t => {
-      html += `<span class="tool-tag">${t}</span>`;
-    });
-    html += `</div></div>`;
-  }
-
-  document.getElementById('screen-diag').innerHTML = html;
-  document.getElementById('screen-diag').scrollTop = 0;
-  window.scrollTo(0, 0);
-  showBottomActions(result, data);
-}
-
-function updateBreadcrumb(current) {
-  const bc = document.getElementById('breadcrumb');
-  bc.innerHTML = `<span>Inicio</span><span class="sep"> › </span><span>${state.moduleName}</span><span class="sep"> › </span><span class="current">${current}</span>`;
-}
-
-function updateProgress(done = false) {
-  const mod = MODULES[state.moduleId];
-  const total = mod.steps.length + 1;
-  const current = done ? total : state.stepHistory.length + 1;
-  const pct = Math.round((current / total) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-bar').classList.add('visible');
-}
-
-// ═══════════════════════════════════════════════
-// BOTTOM ACTIONS
-// ═══════════════════════════════════════════════
-function showBottomActions(result, data) {
-  let el = document.getElementById('bottom-actions');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'bottom-actions';
-    el.className = 'bottom-actions visible';
-    document.body.appendChild(el);
-  } else {
-    el.classList.add('visible');
-  }
-
-  el.innerHTML = `
-    <div class="bottom-row">
-      <button class="btn-restart" onclick="restartModule()">↺ Reiniciar</button>
-      <button class="btn-home" onclick="goHome()">🏠 Inicio</button>
+  <!-- ARTÍCULO 1 -->
+  <a href="electrovalvula-no-abre.html" class="articulo-card">
+    <div class="articulo-top">
+      <div class="articulo-icon">💧</div>
+      <div>
+        <div class="articulo-badge badge-verde">Electroválvulas</div>
+        <div class="articulo-titulo">Electroválvula que no abre</div>
+        <div class="articulo-desc">Diagnóstico ordenado paso a paso. Descartá primero lo más fácil antes de desarmar. En el 80% de los casos la causa es suciedad interna.</div>
+      </div>
     </div>
-    <button class="btn-whatsapp" onclick="shareWhatsApp()">📲 Compartir por WhatsApp</button>
-  `;
-}
+    <div class="articulo-footer">
+      <div class="articulo-tags">
+        <span class="tag">Hidráulico</span>
+        <span class="tag">Diafragma</span>
+        <span class="tag">Solenoide</span>
+      </div>
+      <span class="articulo-link">Leer guía →</span>
+    </div>
+  </a>
 
-function hideBottomActions() {
-  const el = document.getElementById('bottom-actions');
-  if (el) el.classList.remove('visible');
-}
+  <!-- ARTÍCULO 2 -->
+  <a href="bomba-no-arranca.html" class="articulo-card">
+    <div class="articulo-top">
+      <div class="articulo-icon">⚡</div>
+      <div>
+        <div class="articulo-badge badge-naranja">Bombas</div>
+        <div class="articulo-titulo">Bomba de riego que no arranca</div>
+        <div class="articulo-desc">Diagnóstico para bombas monofásicas y trifásicas. Desde el disyuntor hasta el contactor y el capacitor, paso a paso.</div>
+      </div>
+    </div>
+    <div class="articulo-footer">
+      <div class="articulo-tags">
+        <span class="tag">Monofásica</span>
+        <span class="tag">Trifásica</span>
+        <span class="tag">Tablero eléctrico</span>
+      </div>
+      <span class="articulo-link">Leer guía →</span>
+    </div>
+  </a>
 
-function restartModule() {
-  const id = state.moduleId;
-  startModule(id);
-}
+  <!-- ARTÍCULO 3 -->
+  <a href="poca-presion.html" class="articulo-card">
+    <div class="articulo-top">
+      <div class="articulo-icon">📉</div>
+      <div>
+        <div class="articulo-badge badge-celeste">Presión</div>
+        <div class="articulo-titulo">Poca presión en el sistema</div>
+        <div class="articulo-desc">El sistema funciona pero los aspersores o goteros no trabajan bien. Diagnóstico de causas hidráulicas, eléctricas y mecánicas.</div>
+      </div>
+    </div>
+    <div class="articulo-footer">
+      <div class="articulo-tags">
+        <span class="tag">Hidráulico</span>
+        <span class="tag">Bomba</span>
+        <span class="tag">Emisores</span>
+      </div>
+      <span class="articulo-link">Leer guía →</span>
+    </div>
+  </a>
 
-// ═══════════════════════════════════════════════
-// WHATSAPP
-// ═══════════════════════════════════════════════
-function shareWhatsApp() {
-  const mod = MODULES[state.moduleId];
-  const data = state.resultData;
-  if (!data) return;
-  const result = mod.results[data.result];
+  <!-- APP CTA -->
+  <div class="app-cta">
+    <h2>🔧 RiegoCheck — La app</h2>
+    <p>Diagnóstico guiado completo con árbol de decisión, valores de referencia y lógica de campo para 9 problemas de riego.</p>
+    <ul class="beneficios">
+      <li>Bomba monofásica y trifásica no arranca</li>
+      <li>Electroválvula no abre / no cierra</li>
+      <li>Poca presión / Bomba no entrega agua</li>
+      <li>Programador falla / Pérdida de agua</li>
+      <li>Aspersor o gotero no funciona bien</li>
+    </ul>
+    <span class="precio-grande">USD 4,99</span>
+    <span class="precio-sub">Pago único — Sin suscripción</span>
+    <a href="https://play.google.com/store/apps/details?id=io.github.gustavodiazmartinez.twa" class="btn-comprar">📱 Descargar en Google Play</a>
+    <span class="disponible">Disponible para Android · Próximamente en iOS</span>
+  </div>
 
-  const now = new Date();
-  const fecha = now.toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  const hora = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+</div>
 
-  const sev = result.severity;
-  const urgEmoji = sev === 'urgent' ? '🔴' : sev === 'warning' ? '🟡' : '🟢';
-  const urgText = result.urgency.text.toUpperCase();
+<footer>
+  © 2026 RiegoCheck — Diagnóstico profesional para sistemas de riego automático residencial
+</footer>
 
-  let msg = `🔧 *Diagnóstico 7 — Informe de Diagnóstico*\n`;
-  msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += `📅 ${fecha}\n`;
-  msg += `🕐 ${hora}\n`;
-  msg += `📋 Sección: ${state.moduleName}\n\n`;
-  msg += `${urgEmoji} ${result.badge}\n`;
-  msg += `*${result.title}*\n\n`;
-  msg += `${urgEmoji} *${urgText}*\n`;
-  msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-  msg += `🔍 *Secuencia de diagnóstico:*\n\n`;
-
-  state.path.forEach((p, i) => {
-    msg += `${i + 1}. ${p.question}\n   ↳ ${p.answer}\n\n`;
-  });
-
-  msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-  msg += `📝 *Notas y recomendaciones:*\n\n`;
-  result.steps.forEach((s, i) => {
-    msg += `${i + 1}. ${s}\n\n`;
-  });
-
-  if (data.tools && data.tools.length > 0) {
-    msg += `🔧 *Herramientas:* ${data.tools.join(', ')}\n\n`;
-  }
-
-  msg += `━━━━━━━━━━━━━━━━━━━━\n_Generado con Diagnóstico 7_`;
-
-  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
-}
-</script>
 </body>
 </html>
