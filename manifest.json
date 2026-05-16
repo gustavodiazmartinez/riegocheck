@@ -5,7 +5,7 @@
   "name": "RiegoCheck",
   "short_name": "RiegoCheck",
   "orientation": "any",
-  "scope": "/riegocheck/",
+  "scope": "/",
   "start_url": "/riegocheck_v3.html",
   "theme_color": "#00e5c8",
   "id": "riegocheck",
