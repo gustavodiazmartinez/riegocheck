@@ -6,7 +6,7 @@
   "short_name": "RiegoCheck",
   "orientation": "any",
   "scope": "/riegocheck/",
-  "start_url": "/riegocheck/riegocheck_v3.html",
+  "start_url": "/riegocheck_v3.html",
   "theme_color": "#00e5c8",
   "id": "riegocheck",
   "description": "Diagnóstico guiado para sistemas de riego automático residencial",
