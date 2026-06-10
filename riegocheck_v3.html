@@ -152,6 +152,81 @@ header {
 .btn-home:active { opacity: 0.85; }
 .btn-whatsapp { background: var(--whatsapp); border: none; color: #fff; padding: 15px; border-radius: 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
 .btn-whatsapp:active { opacity: 0.85; }
+
+/* VOLTAGE WARNING SCREEN */
+#screen-voltage {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+.voltage-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  animation: pulse-warn 1.8s ease-in-out infinite;
+}
+@keyframes pulse-warn {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+.voltage-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.voltage-card {
+  background: var(--bg2);
+  border: 1px solid var(--orange);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 360px;
+}
+.voltage-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.voltage-row:last-child { border-bottom: none; }
+.voltage-row-icon { font-size: 22px; flex-shrink: 0; }
+.voltage-row-text { font-size: 14px; color: var(--text); line-height: 1.4; }
+.voltage-row-text strong { color: var(--orange); }
+.voltage-disclaimer {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 28px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+.btn-entendido {
+  background: var(--orange);
+  color: #000;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 48px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 360px;
+}
 </style>
 </head>
 <body>
@@ -164,6 +239,30 @@ header {
 </header>
 <div class="breadcrumb" id="breadcrumb"></div>
 <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+<!-- VOLTAGE WARNING -->
+<div id="screen-voltage">
+  <div class="voltage-icon">⚠️</div>
+  <div class="voltage-title">Advertencia eléctrica</div>
+  <div class="voltage-card">
+    <div class="voltage-row">
+      <div class="voltage-row-icon">🔌</div>
+      <div class="voltage-row-text">Equipos monofásicos operan a <strong>220V</strong></div>
+    </div>
+    <div class="voltage-row">
+      <div class="voltage-row-icon">⚡</div>
+      <div class="voltage-row-text">Equipos trifásicos operan a <strong>380V</strong></div>
+    </div>
+    <div class="voltage-row">
+      <div class="voltage-row-icon">🏠</div>
+      <div class="voltage-row-text">Esta app es para uso en instalaciones <strong>residenciales</strong></div>
+    </div>
+  </div>
+  <div class="voltage-disclaimer">
+    Trabajar con instalaciones eléctricas implica riesgo de electrocución. Si no tenés formación en electricidad, consultá a un técnico habilitado.
+  </div>
+  <button class="btn-entendido" onclick="dismissVoltage()">Entendido</button>
+</div>
 
 <!-- HOME -->
 <div id="screen-home">
@@ -205,6 +304,13 @@ header {
 <div id="screen-diag" class="screen"></div>
 
 <script>
+// ═══════════════════════════════════════════
+// PANTALLA DE ADVERTENCIA DE VOLTAJE
+// ═══════════════════════════════════════════
+function dismissVoltage() {
+  document.getElementById('screen-voltage').style.display = 'none';
+}
+
 // ═══════════════════════════════════════════
 // MÓDULOS — basados en PDFs aprobados v2
 // ═══════════════════════════════════════════
