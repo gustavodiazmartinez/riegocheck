@@ -128,6 +128,30 @@
       letter-spacing: 1px;
     }
 
+    .btn-hero-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      color: var(--gris-oscuro);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      margin-top: 32px;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-hero-play:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    }
+
     /* ARTÍCULOS */
     .container {
       max-width: 720px;
@@ -366,6 +390,9 @@
       <span class="stat-label">Pago único</span>
     </div>
   </div>
+  <a href="https://play.google.com/store/apps/details?id=com.riegocheck.twa" class="btn-hero-play">
+    📱 Descargar en Google Play
+  </a>
 </div>
 
 <div class="container">
@@ -445,7 +472,7 @@
     </ul>
     <span class="precio-grande">USD 4,99</span>
     <span class="precio-sub">Pago único — Sin suscripción</span>
-    <a href="https://play.google.com/store/apps/details?id=io.github.gustavodiazmartinez.twa" class="btn-comprar">📱 Descargar en Google Play</a>
+    <a href="https://play.google.com/store/apps/details?id=com.riegocheck.twa" class="btn-comprar">📱 Descargar en Google Play</a>
     <span class="disponible">Disponible para Android · Próximamente en iOS</span>
   </div>
 
