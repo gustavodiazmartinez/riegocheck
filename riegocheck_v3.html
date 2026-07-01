@@ -227,9 +227,107 @@ header {
   width: 100%;
   max-width: 360px;
 }
+
+#lock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0d1117;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.lock-box {
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+}
+.lock-box .logo-icon-big { font-size: 48px; margin-bottom: 8px; }
+.lock-box h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  color: #fff;
+  font-size: 24px;
+  margin: 0 0 6px;
+}
+.lock-box p {
+  color: #8b949e;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+#lock-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #30363d;
+  background: #161b22;
+  color: #fff;
+  font-family: 'Barlow', sans-serif;
+  font-size: 16px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+#lock-btn {
+  width: 100%;
+  background: #22d3ee;
+  border: none;
+  color: #0d1117;
+  padding: 14px;
+  border-radius: 12px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+#lock-error {
+  color: #ef4444;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  margin-top: 10px;
+  min-height: 16px;
+}
 </style>
 </head>
 <body>
+
+<div id="lock-overlay">
+  <div class="lock-box">
+    <div class="logo-icon-big">💧</div>
+    <h2>RiegoCheck</h2>
+    <p>Ingresá la clave de acceso que te enviamos</p>
+    <input type="text" id="lock-input" placeholder="Clave de acceso" autocomplete="off">
+    <button id="lock-btn" onclick="checkLockPassword()">Ingresar</button>
+    <div id="lock-error"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var ACCESS_KEY = "riegocheck2026riegocheck";
+  if (localStorage.getItem('riegocheck_unlocked') === 'yes') {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('lock-overlay').style.display = 'none';
+    });
+  }
+  window.checkLockPassword = function() {
+    var val = document.getElementById('lock-input').value.trim();
+    if (val === ACCESS_KEY) {
+      localStorage.setItem('riegocheck_unlocked', 'yes');
+      document.getElementById('lock-overlay').style.display = 'none';
+    } else {
+      document.getElementById('lock-error').textContent = 'Clave incorrecta. Verificá con quien te la envió.';
+    }
+  };
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('lock-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkLockPassword();
+    });
+  });
+})();
+</script>
+
 <header>
   <div class="logo" onclick="goHome()">
     <div class="logo-icon">💧</div>
